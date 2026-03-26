@@ -1,0 +1,17 @@
+{
+  "_comment": "Edit this file to add your collators. Addresses must be H160 / EVM format (0x + 40 hex chars).",
+  "collators": [
+    {
+      "address": "0xYOUR_COLLATOR_ADDRESS_HERE",
+      "network": "moonbeam",
+      "label": "My Moonbeam Collator"
+    }
+  ],
+  "consecutiveInactiveChecksBeforeAlert": 2,
+  "_alertComment": "Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID as GitHub Actions secrets to enable Telegram alerts.",
+  "alerts": {
+    "telegram": {
+      "enabled": true
+    }
+  }
+}
