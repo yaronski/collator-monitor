@@ -67,11 +67,11 @@ async function sendTelegram(message) {
 }
 
 function withTimeout(promise, ms) {
-  return new Promise((_, reject) => {
+  return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`Timeout after ${ms}ms`)), ms);
     promise.then(
-      (v) => { clearTimeout(timer); return v; },
-      (e) => { clearTimeout(timer); throw e; }
+      (v) => { clearTimeout(timer); resolve(v); },
+      (e) => { clearTimeout(timer); reject(e); }
     );
   });
 }
