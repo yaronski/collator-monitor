@@ -119,6 +119,9 @@ body {
   padding: 14px 18px;
   background: var(--bg2);
 }
+.stat.ok { background: rgba(74, 222, 128, 0.03); }
+.stat.bad { background: rgba(248, 113, 113, 0.04); }
+.stat.warn { background: rgba(251, 191, 36, 0.03); }
 .stat-label {
   font-size: 11px;
   color: var(--text3);
@@ -190,6 +193,12 @@ body {
   flex: 1;
   min-width: 0;
 }
+.card-addr a {
+  color: var(--text3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: #444;
+}
 
 .net-badge {
   font-family: var(--mono);
@@ -200,8 +209,8 @@ body {
   letter-spacing: 0.05em;
   flex-shrink: 0;
 }
-.net-badge.moonbeam  { background: #1a1040; color: #a78bfa; border: 1px solid #4c1d95; }
-.net-badge.moonriver { background: #1a0f05; color: #fb923c; border: 1px solid #7c2d12; }
+.net-badge.moonbeam  { background: rgba(167, 139, 250, 0.08); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.15); }
+.net-badge.moonriver { background: rgba(251, 146, 60, 0.08); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.15); }
 
 .status-badge {
   font-family: var(--mono);
@@ -325,10 +334,9 @@ body {
   <div class="alert-banner" id="alertBanner"></div>
 
   <div class="stats" id="statsRow">
-    <div class="stat"><div class="stat-label">Monitored</div><div class="stat-value mute" id="statTotal">–</div></div>
-    <div class="stat"><div class="stat-label">Active</div><div class="stat-value ok" id="statActive">–</div></div>
-    <div class="stat"><div class="stat-label">Not in set</div><div class="stat-value bad" id="statInactive">–</div></div>
-    <div class="stat"><div class="stat-label">Warnings</div><div class="stat-value warn" id="statWarn">–</div></div>
+    <div class="stat ok" id="statActiveBox"><div class="stat-label">Active</div><div class="stat-value ok" id="statActive">–</div></div>
+    <div class="stat bad" id="statInactiveBox"><div class="stat-label">Not in set</div><div class="stat-value bad" id="statInactive">–</div></div>
+    <div class="stat warn" id="statWarnBox"><div class="stat-label">Warnings</div><div class="stat-value warn" id="statWarn">–</div></div>
   </div>
 
   <div class="section-label">Collators</div>
@@ -337,7 +345,7 @@ body {
   </div>
 
   <div class="footer">
-    <span>Precompile: 0x0000000000000000000000000000000000000800 · isSelectedCandidate + awardedPoints</span>
+    <span>Precompile <a href="https://moonbeam.moonscan.io/address/0x0000000000000000000000000000000000000800" target="_blank" style="color:inherit;text-decoration:underline;">0x0000000000000000000000000000000000000800</a> · isSelectedCandidate + awardedPoints</span>
     <span>Updated by GitHub Actions every hour</span>
   </div>
 
@@ -372,10 +380,22 @@ function setIndicator(state) {
 
 function renderStats(collators) {
   const vals = Object.values(collators);
-  document.getElementById('statTotal').textContent    = vals.length || '0';
-  document.getElementById('statActive').textContent   = vals.filter(c => c.statusText === 'active').length;
-  document.getElementById('statInactive').textContent = vals.filter(c => c.statusText === 'inactive').length;
-  document.getElementById('statWarn').textContent     = vals.filter(c => c.statusText === 'warning').length;
+  const activeCount = vals.filter(c => c.statusText === 'active').length;
+  const inactiveCount = vals.filter(c => c.statusText === 'inactive').length;
+  const warnCount = vals.filter(c => c.statusText === 'warning').length;
+  
+  document.getElementById('statActive').textContent = activeCount;
+  document.getElementById('statInactive').textContent = inactiveCount;
+  document.getElementById('statWarn').textContent = warnCount;
+  
+  // Update stat box backgrounds based on status
+  const activeBox = document.getElementById('statActiveBox');
+  const inactiveBox = document.getElementById('statInactiveBox');
+  const warnBox = document.getElementById('statWarnBox');
+  
+  activeBox.className = 'stat' + (activeCount > 0 ? ' ok' : '');
+  inactiveBox.className = 'stat' + (inactiveCount > 0 ? ' bad' : '');
+  warnBox.className = 'stat' + (warnCount > 0 ? ' warn' : '');
 }
 
 function renderCards(collators) {
@@ -398,13 +418,15 @@ function renderCards(collators) {
     const consec = col.consecutiveInactive > 0
       ? `<div class="meta-item"><div class="meta-key">Consec. inactive</div><div class="meta-val highlight">${col.consecutiveInactive}</div></div>`
       : '';
+    const fullAddr = col.address;
+    const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
 
     return `
     <div class="card status-${st}">
       <div class="card-row">
         <div class="dot ${st}"></div>
         ${label !== col.address ? `<div class="card-label">${label}</div>` : ''}
-        <div class="card-addr">${col.address}</div>
+        <div class="card-addr"><a href="${subscanBase}${fullAddr}" target="_blank">${fullAddr}</a></div>
         <span class="net-badge ${col.network}">${col.network === 'moonbeam' ? 'MOONBEAM' : 'MOONRIVER'}</span>
         <span class="status-badge ${st}">${statusLabel(st)}</span>
       </div>
@@ -432,7 +454,7 @@ function renderAlert(collators) {
   const banner   = document.getElementById('alertBanner');
   const inactive = Object.values(collators).filter(c => c.statusText === 'inactive');
   if (!inactive.length) { banner.classList.remove('show'); return; }
-  const names = inactive.map(c => `<strong>${c.label || c.address.slice(0,10)+'…'}</strong>`).join(', ');
+  const names = inactive.map(c => `<strong>${c.label || c.address}</strong>`).join(', ');
   banner.innerHTML = `⚠ ${inactive.length} collator${inactive.length > 1 ? 's are' : ' is'} NOT in the active set: ${names}`;
   banner.classList.add('show');
 }

@@ -142,7 +142,7 @@ async function main() {
       console.error(`  ✗ RPC error: ${err.message}`);
       next.collators[key] = {
         ...p,
-        address: shortAddr(col.address),
+        address: col.address.toLowerCase(),
         network: col.network,
         label: col.label || '',
         statusText: 'error',
@@ -187,7 +187,7 @@ async function main() {
     if (!isActive) console.log(`  Consecutive inactive checks: ${consecutiveInactive}/${threshold}`);
 
     next.collators[key] = {
-      address: shortAddr(col.address),
+      address: col.address.toLowerCase(),
       network: col.network,
       label: col.label || '',
       isActive,
