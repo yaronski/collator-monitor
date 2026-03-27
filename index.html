@@ -153,10 +153,13 @@ body {
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 20px;
   transition: border-color 0.2s;
 }
+.card.network-moonbeam { border-left-color: #a78bfa; }
+.card.network-moonriver { border-left-color: #fb923c; }
 .card.status-inactive { border-color: var(--red-d); background: #140d0d; }
 .card.status-warning  { border-color: rgba(251,191,36,0.25); background: #0f0d06; }
 .card.status-error    { border-color: rgba(251,191,36,0.2); }
@@ -200,17 +203,16 @@ body {
   text-decoration-color: #444;
 }
 
-.net-badge {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  padding: 2px 7px;
-  border-radius: 3px;
-  letter-spacing: 0.05em;
+.net-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
   flex-shrink: 0;
 }
-.net-badge.moonbeam  { background: rgba(167, 139, 250, 0.08); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.15); }
-.net-badge.moonriver { background: rgba(251, 146, 60, 0.08); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.15); }
+.net-indicator.moonbeam { background: #a78bfa; box-shadow: 0 0 4px rgba(167, 139, 250, 0.5); }
+.net-indicator.moonriver { background: #fb923c; box-shadow: 0 0 4px rgba(251, 146, 60, 0.5); }
 
 .status-badge {
   font-family: var(--mono);
@@ -422,12 +424,12 @@ function renderCards(collators) {
     const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
 
     return `
-    <div class="card status-${st}">
+    <div class="card status-${st} network-${col.network}">
       <div class="card-row">
         <div class="dot ${st}"></div>
+        <span class="net-indicator ${col.network}"></span>
         ${label !== col.address ? `<div class="card-label">${label}</div>` : ''}
         <div class="card-addr"><a href="${subscanBase}${fullAddr}" target="_blank">${fullAddr}</a></div>
-        <span class="net-badge ${col.network}">${col.network === 'moonbeam' ? 'MOONBEAM' : 'MOONRIVER'}</span>
         <span class="status-badge ${st}">${statusLabel(st)}</span>
       </div>
       <div class="card-meta">
