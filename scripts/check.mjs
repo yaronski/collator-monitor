@@ -31,9 +31,11 @@ const RPC = {
 
 const PRECOMPILE = '0x0000000000000000000000000000000000000800';
 
-const iface = new ethers.Interface([
-  'function round() view returns (uint256 current, uint256 firstBlock, uint256 roundLength)',
-]);
+const STAKING_ABI = [
+  'function round() view returns (uint256, uint256, uint256)',
+  'function isSelectedCandidate(address) view returns (bool)',
+  'function awardedPoints(uint32, address) view returns (uint32)',
+];
 
 const readJSON = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const writeJSON = (p, d) => writeFileSync(p, JSON.stringify(d, null, 2) + '\n');
@@ -72,30 +74,19 @@ async function queryCollator(address, network) {
   for (const rpcUrl of rpcUrls) {
     try {
       const provider = new ethers.JsonRpcProvider(rpcUrl);
+      const contract = new ethers.Contract(PRECOMPILE, STAKING_ABI, provider);
 
-      const roundRaw = await provider.call({
-        to: PRECOMPILE,
-        data: '0x4e7748f',
-      });
+      const [roundResult, isActive] = await Promise.all([
+        contract.round(),
+        contract.isSelectedCandidate(address),
+      ]);
 
-      const selectedRaw = await provider.call({
-        to: PRECOMPILE,
-        data: '0x264b6e6c' + address.slice(2).toLowerCase().padStart(64, '0'),
-      });
-
-      const currentRound = Number(BigInt(roundRaw));
-      const isActive = selectedRaw === '0x0000000000000000000000000000000000000000000000000000000000000001';
+      const currentRound = Number(roundResult[0]);
 
       let points = null;
       if (isActive) {
         try {
-          const roundHex = ethers.zeroPadValue(ethers.toBeHex(currentRound), 32).slice(2);
-          const addrHex = address.slice(2).toLowerCase().padStart(64, '0');
-          const pointsRaw = await provider.call({
-            to: PRECOMPILE,
-            data: '0x59a9e84d' + roundHex + addrHex,
-          });
-          points = Number(BigInt(pointsRaw));
+          points = Number(await contract.awardedPoints(currentRound, address));
         } catch (_) {}
       }
 
