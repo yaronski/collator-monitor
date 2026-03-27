@@ -11,14 +11,14 @@
 
 :root {
   --bg:      #0d0d0d;
-  --bg2:     #161616;
-  --bg3:     #1e1e1e;
-  --bg4:     #262626;
-  --border:  rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --text:    #e8e6e0;
-  --text2:   #888;
-  --text3:   #555;
+  --bg2:     #1a1a1a;
+  --bg3:     #242424;
+  --bg4:     #2e2e2e;
+  --border:  rgba(255,255,255,0.1);
+  --border2: rgba(255,255,255,0.18);
+  --text:    #f0ede8;
+  --text2:   #a0a0a0;
+  --text3:   #707070;
   --mono:    'JetBrains Mono', monospace;
   --sans:    'DM Sans', system-ui, sans-serif;
   --green:   #4ade80;
@@ -135,8 +135,8 @@ body {
   font-weight: 500;
 }
 .stat-value.ok   { color: var(--green); }
-.stat-value.bad  { color: var(--red); }
-.stat-value.warn { color: var(--amber); }
+.stat-value.bad  { color: var(--text); }
+.stat-value.warn { color: var(--text); }
 .stat-value.mute { color: var(--text); }
 
 /* ── Collator cards ─────────────────────────────────────────── */
@@ -445,7 +445,7 @@ function renderCards(collators) {
         </div>
         <div class="meta-item">
           <div class="meta-key">Points this round</div>
-          <div class="meta-val ${col.points === 0 && col.isActive ? 'muted' : col.points > 0 ? 'ok' : ''}">${pts}</div>
+          <div class="meta-val">${pts}</div>
         </div>
         ${consec}
         <div class="meta-item">
