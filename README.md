@@ -79,27 +79,19 @@ Separate chat IDs with commas in `TELEGRAM_CHAT_ID`:
 
 #### Getting Telegram credentials
 
-1. Message [@BotFather](https://t.me/botfather) → `/newbot` → follow prompts → copy the **token**
-2. **Important**: Send any message to your new bot first (e.g., `/start`)
-3. Visit in your browser: `https://api.telegram.org/botYOUR_TOKEN/getUpdates` (replace `YOUR_TOKEN`)
-4. Look for `"chat":{"id":123456789` — that number is your `TELEGRAM_CHAT_ID`
+1. **Create bot**: Message [@BotFather](https://t.me/botfather) → `/newbot` → follow prompts → copy the token
+2. **Get your chat ID**:
+   - Open Telegram and send any message to your new bot (e.g., `/start`)
+   - **Immediately** open this URL in your browser (note the `bot` prefix):
+     ```
+     https://api.telegram.org/botYOUR_TOKEN/getUpdates
+     ```
+     Example: `https://api.telegram.org/bot123456:ABC-DEF.../getUpdates`
+   - Look for `"chat":{"id":123456789` — that number is your `TELEGRAM_CHAT_ID`
 
-**Example response:**
-```json
-{
-  "ok": true,
-  "result": [{
-    "message": {
-      "chat": {
-        "id": 123456789,
-        "first_name": "Your Name"
-      }
-    }
-  }]
-}
-```
-
-If you get `{"ok":true,"result":[]}`, you haven't messaged the bot yet.
+**Troubleshooting:**
+- `{"ok":false,"error_code":404}` → Missing `bot` prefix in URL
+- `{"ok":true,"result":[]}` → No recent messages. Send a message to your bot, then immediately refresh the URL (API only returns new messages)
 
 ### 3. Enable GitHub Pages
 
