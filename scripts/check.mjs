@@ -83,8 +83,7 @@ async function queryCollator(address, network) {
         data: '0x264b6e6c' + address.slice(2).toLowerCase().padStart(64, '0'),
       });
 
-      const decoded = iface.decodeFunctionResult('round', roundRaw);
-      const currentRound = Number(decoded[0]);
+      const currentRound = Number(BigInt(roundRaw));
       const isActive = selectedRaw === '0x0000000000000000000000000000000000000000000000000000000000000001';
 
       let points = null;
