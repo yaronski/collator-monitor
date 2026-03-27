@@ -1,17 +1,56 @@
 {
-  "lastUpdated": "2026-03-27T12:06:30.098Z",
+  "lastUpdated": "2026-03-27T12:16:36.907Z",
   "collators": {
-    "moonbeam:0x0000…0001": {
-      "address": "0x0000000000000000000000000000000000000001",
+    "moonbeam:0x1002…c08e": {
+      "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
-      "label": "TEST - Will Alert",
-      "isActive": false,
-      "points": null,
+      "label": "dude mb",
+      "isActive": true,
+      "points": 580,
       "currentRound": 5995,
-      "consecutiveInactive": 1,
-      "alertedInactive": true,
-      "statusText": "inactive",
-      "lastChecked": "2026-03-27T12:06:30.098Z",
+      "consecutiveInactive": 0,
+      "alertedInactive": false,
+      "statusText": "active",
+      "lastChecked": "2026-03-27T12:16:36.907Z",
+      "lastError": null
+    },
+    "moonriver:0x693a…f385": {
+      "address": "0x693ab260de2a31c1b5d7dc9cb253b87ed9b1f385",
+      "network": "moonriver",
+      "label": "dude mr",
+      "isActive": true,
+      "points": 220,
+      "currentRound": 20671,
+      "consecutiveInactive": 0,
+      "alertedInactive": false,
+      "statusText": "active",
+      "lastChecked": "2026-03-27T12:16:36.907Z",
+      "lastError": null
+    },
+    "moonbeam:0xdd76…94d0": {
+      "address": "0xdd760a8f8ce5e4b5f9ff436ee7790c603d6294d0",
+      "network": "moonbeam",
+      "label": "stavros mb",
+      "isActive": true,
+      "points": 500,
+      "currentRound": 5995,
+      "consecutiveInactive": 0,
+      "alertedInactive": false,
+      "statusText": "active",
+      "lastChecked": "2026-03-27T12:16:36.907Z",
+      "lastError": null
+    },
+    "moonriver:0x7d71…86d0": {
+      "address": "0x7d71ea17d73f32e055bc84651e711eafcadb86d0",
+      "network": "moonriver",
+      "label": "stavros mr",
+      "isActive": true,
+      "points": 180,
+      "currentRound": 20671,
+      "consecutiveInactive": 0,
+      "alertedInactive": false,
+      "statusText": "active",
+      "lastChecked": "2026-03-27T12:16:36.907Z",
       "lastError": null
     }
   }
