@@ -153,13 +153,18 @@ body {
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 20px;
   transition: border-color 0.2s;
 }
-.card.network-moonbeam { border-left-color: #a78bfa; }
-.card.network-moonriver { border-left-color: #fb923c; }
+.card.network-moonbeam { 
+  border: 1px solid rgba(167, 139, 250, 0.25); 
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.05) 0%, var(--bg2) 50%);
+}
+.card.network-moonriver { 
+  border: 1px solid rgba(251, 146, 60, 0.25); 
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.05) 0%, var(--bg2) 50%);
+}
 .card.status-inactive { border-color: var(--red-d); background: #140d0d; }
 .card.status-warning  { border-color: rgba(251,191,36,0.25); background: #0f0d06; }
 .card.status-error    { border-color: rgba(251,191,36,0.2); }
@@ -172,15 +177,8 @@ body {
 }
 
 .dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  display: none;
 }
-.dot.active   { background: var(--green); box-shadow: 0 0 5px var(--green); }
-.dot.inactive { background: var(--red); }
-.dot.warning  { background: var(--amber); }
-.dot.error    { background: var(--amber); }
-.dot.loading  { background: var(--text3); animation: blink 1s infinite; }
 
 .card-label {
   font-size: 14px;
@@ -203,16 +201,15 @@ body {
   text-decoration-color: #444;
 }
 
-.net-indicator {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  margin-right: 6px;
+.net-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   flex-shrink: 0;
 }
-.net-indicator.moonbeam { background: #a78bfa; box-shadow: 0 0 4px rgba(167, 139, 250, 0.5); }
-.net-indicator.moonriver { background: #fb923c; box-shadow: 0 0 4px rgba(251, 146, 60, 0.5); }
+.net-label.moonbeam { color: #a78bfa; }
+.net-label.moonriver { color: #fb923c; }
 
 .status-badge {
   font-family: var(--mono);
@@ -409,9 +406,14 @@ function renderCards(collators) {
     return;
   }
 
-  // Sort: inactive first, then warnings, then active
-  const order = { inactive: 0, error: 1, warning: 2, active: 3 };
-  entries.sort((a, b) => (order[a.statusText] ?? 9) - (order[b.statusText] ?? 9));
+  // Sort: Moonbeam first, then by status (inactive first)
+  const statusOrder = { inactive: 0, error: 1, warning: 2, active: 3 };
+  const networkOrder = { moonbeam: 0, moonriver: 1 };
+  entries.sort((a, b) => {
+    const netDiff = (networkOrder[a.network] ?? 9) - (networkOrder[b.network] ?? 9);
+    if (netDiff !== 0) return netDiff;
+    return (statusOrder[a.statusText] ?? 9) - (statusOrder[b.statusText] ?? 9);
+  });
 
   list.innerHTML = entries.map(col => {
     const st    = col.statusText || 'error';
@@ -422,17 +424,20 @@ function renderCards(collators) {
       : '';
     const fullAddr = col.address;
     const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
+    const networkLabel = col.network === 'moonbeam' ? 'Moonbeam' : 'Moonriver';
 
     return `
     <div class="card status-${st} network-${col.network}">
       <div class="card-row">
-        <div class="dot ${st}"></div>
-        <span class="net-indicator ${col.network}"></span>
         ${label !== col.address ? `<div class="card-label">${label}</div>` : ''}
         <div class="card-addr"><a href="${subscanBase}${fullAddr}" target="_blank">${fullAddr}</a></div>
         <span class="status-badge ${st}">${statusLabel(st)}</span>
       </div>
       <div class="card-meta">
+        <div class="meta-item">
+          <div class="meta-key">Network</div>
+          <div class="meta-val net-label ${col.network}">${networkLabel}</div>
+        </div>
         <div class="meta-item">
           <div class="meta-key">Round</div>
           <div class="meta-val ${!col.isActive ? 'highlight' : ''}">${col.currentRound ?? '–'}</div>
