@@ -16,8 +16,6 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const ROOT = join(dirname(__filename), '..');
 
-// ── RPC endpoints ─────────────────────────────────────────────────────────────
-
 const RPC = {
   moonbeam: [
     'https://rpc.api.moonbeam.network',
@@ -33,15 +31,11 @@ const RPC = {
 
 const PRECOMPILE = '0x0000000000000000000000000000000000000800';
 
-const ABI = [
-  'function round() view returns (uint256, uint256, uint256)',
-  'function isSelectedCandidate(address) view returns (bool)',
-  'function awardedPoints(uint32, address) view returns (uint32)',
-];
+const iface = new ethers.Interface([
+  'function round() view returns (uint256 current, uint256 firstBlock, uint256 roundLength)',
+]);
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const readJSON  = (p) => JSON.parse(readFileSync(p, 'utf8'));
+const readJSON = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const writeJSON = (p, d) => writeFileSync(p, JSON.stringify(d, null, 2) + '\n');
 
 function shortAddr(addr) {
@@ -49,7 +43,7 @@ function shortAddr(addr) {
 }
 
 async function sendTelegram(message) {
-  const token   = process.env.TELEGRAM_BOT_TOKEN;
+  const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatIds = process.env.TELEGRAM_CHAT_ID?.split(',').map(s => s.trim()).filter(Boolean);
   if (!token || !chatIds?.length) {
     console.log('  [Telegram] No credentials set — skipping notification.');
@@ -58,19 +52,17 @@ async function sendTelegram(message) {
   for (const chatId of chatIds) {
     try {
       const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' }),
+        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' }),
       });
       if (!res.ok) console.error('  [Telegram] Send failed:', await res.text());
-      else         console.log('  [Telegram] Alert sent to', shortAddr(chatId));
+      else console.log('  [Telegram] Alert sent to', shortAddr(chatId));
     } catch (err) {
       console.error('  [Telegram] Error:', err.message);
     }
   }
 }
-
-// ── On-chain query ────────────────────────────────────────────────────────────
 
 async function queryCollator(address, network) {
   const rpcUrls = RPC[network];
@@ -80,26 +72,36 @@ async function queryCollator(address, network) {
   for (const rpcUrl of rpcUrls) {
     try {
       const provider = new ethers.JsonRpcProvider(rpcUrl);
-      const staking  = new ethers.Contract(PRECOMPILE, ABI, provider);
 
-      const [roundData, isActive] = await Promise.all([
-        staking.round(),
-        staking.isSelectedCandidate(address),
-      ]);
+      const roundRaw = await provider.call({
+        to: PRECOMPILE,
+        data: '0x4e7748f',
+      });
 
-      const currentRound = Number(roundData[0]);
-      const firstBlock   = Number(roundData[1]);
-      const roundLength  = Number(roundData[2]);
+      const selectedRaw = await provider.call({
+        to: PRECOMPILE,
+        data: '0x264b6e6c' + address.slice(2).toLowerCase().padStart(64, '0'),
+      });
+
+      const decoded = iface.decodeFunctionResult('round', roundRaw);
+      const currentRound = Number(decoded[0]);
+      const isActive = selectedRaw === '0x0000000000000000000000000000000000000000000000000000000000000001';
 
       let points = null;
       if (isActive) {
         try {
-          points = Number(await staking.awardedPoints(currentRound, address));
+          const roundHex = ethers.zeroPadValue(ethers.toBeHex(currentRound), 32).slice(2);
+          const addrHex = address.slice(2).toLowerCase().padStart(64, '0');
+          const pointsRaw = await provider.call({
+            to: PRECOMPILE,
+            data: '0x59a9e84d' + roundHex + addrHex,
+          });
+          points = Number(BigInt(pointsRaw));
         } catch (_) {}
       }
 
       console.log(`  ✓ RPC: ${rpcUrl}`);
-      return { currentRound, firstBlock, roundLength, isActive, points };
+      return { currentRound, isActive, points };
     } catch (err) {
       lastError = err;
       console.log(`  ✗ RPC failed (${rpcUrl}): ${err.message}`);
@@ -109,17 +111,15 @@ async function queryCollator(address, network) {
   throw lastError;
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
-
 async function main() {
   const envConfig = process.env.COLLATOR_CONFIG ? JSON.parse(process.env.COLLATOR_CONFIG) : null;
   const fileConfig = readJSON(join(ROOT, 'config.json'));
-  const collators  = envConfig?.collators || fileConfig.collators || [];
-  const threshold  = envConfig?.consecutiveInactiveChecksBeforeAlert ?? fileConfig.consecutiveInactiveChecksBeforeAlert ?? 2;
-  
+  const collators = envConfig?.collators || fileConfig.collators || [];
+  const threshold = envConfig?.consecutiveInactiveChecksBeforeAlert ?? fileConfig.consecutiveInactiveChecksBeforeAlert ?? 2;
+
   const statusPath = join(ROOT, 'status.json');
-  const prev       = existsSync(statusPath) ? readJSON(statusPath) : { collators: {} };
-  const now        = new Date().toISOString();
+  const prev = existsSync(statusPath) ? readJSON(statusPath) : { collators: {} };
+  const now = new Date().toISOString();
 
   const next = { lastUpdated: now, collators: {} };
 
@@ -129,13 +129,12 @@ async function main() {
       continue;
     }
 
-    const key   = `${col.network}:${shortAddr(col.address.toLowerCase())}`;
-    const p     = prev.collators?.[key] ?? {};
+    const key = `${col.network}:${shortAddr(col.address.toLowerCase())}`;
+    const p = prev.collators?.[key] ?? {};
     const label = col.label || shortAddr(col.address);
 
     console.log(`\nChecking ${label} (${col.network})…`);
 
-    // ── Query chain ────────────────────────────────────────────────────────────
     let data;
     try {
       data = await queryCollator(col.address, col.network);
@@ -143,11 +142,11 @@ async function main() {
       console.error(`  ✗ RPC error: ${err.message}`);
       next.collators[key] = {
         ...p,
-        address:   shortAddr(col.address),
-        network:   col.network,
-        label:     col.label || '',
+        address: shortAddr(col.address),
+        network: col.network,
+        label: col.label || '',
         statusText: 'error',
-        lastError:  err.message,
+        lastError: err.message,
         lastChecked: now,
       };
       continue;
@@ -155,24 +154,17 @@ async function main() {
 
     const { currentRound, isActive, points } = data;
 
-    // ── Consecutive inactive counter ──────────────────────────────────────────
-    // Resets to 0 the moment the collator is active again.
     const consecutiveInactive = isActive ? 0 : (p.consecutiveInactive ?? 0) + 1;
 
-    // ── Alert state ───────────────────────────────────────────────────────────
-    // alertedInactive stays true until the collator recovers, so we don't spam.
     const wasAlertedInactive = p.alertedInactive ?? false;
     const triggerInactiveAlert = !isActive && consecutiveInactive >= threshold && !wasAlertedInactive;
     const triggerRecoveryAlert = isActive && wasAlertedInactive;
 
-    // ── Derive display status ─────────────────────────────────────────────────
-    // "warning" = in active set but 0 points so far this round (soft signal).
     let statusText;
-    if (!isActive)          statusText = 'inactive';
-    else if (points === 0)  statusText = 'warning';
-    else                    statusText = 'active';
+    if (!isActive) statusText = 'inactive';
+    else if (points === 0) statusText = 'warning';
+    else statusText = 'active';
 
-    // ── Send alerts ───────────────────────────────────────────────────────────
     if (triggerInactiveAlert) {
       await sendTelegram(
         `🚨 <b>Collator not in active set</b>\n\n` +
@@ -190,16 +182,14 @@ async function main() {
       );
     }
 
-    // ── Log ───────────────────────────────────────────────────────────────────
     const pointsStr = points !== null ? points : '–';
     console.log(`  Round: ${currentRound} | Active: ${isActive} | Points this round: ${pointsStr}`);
     if (!isActive) console.log(`  Consecutive inactive checks: ${consecutiveInactive}/${threshold}`);
 
-    // ── Persist ───────────────────────────────────────────────────────────────
     next.collators[key] = {
-      address:    shortAddr(col.address),
-      network:    col.network,
-      label:      col.label || '',
+      address: shortAddr(col.address),
+      network: col.network,
+      label: col.label || '',
       isActive,
       points,
       currentRound,
@@ -207,7 +197,7 @@ async function main() {
       alertedInactive: !isActive && (triggerInactiveAlert || wasAlertedInactive),
       statusText,
       lastChecked: now,
-      lastError:   null,
+      lastError: null,
     };
   }
 
