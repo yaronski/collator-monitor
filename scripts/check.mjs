@@ -5,7 +5,7 @@
  * configured collator, detects active-set transitions, sends Telegram alerts,
  * and writes the result back to status.json.
  *
- * Called by GitHub Actions every 30 minutes.
+ * Called by GitHub Actions every hour.
  */
 
 import { ethers } from 'ethers';
@@ -19,21 +19,24 @@ const ROOT = join(dirname(__filename), '..');
 // ── RPC endpoints ─────────────────────────────────────────────────────────────
 
 const RPC = {
-  moonbeam:   'https://rpc.api.moonbeam.network',
-  moonriver:  'https://rpc.api.moonriver.moonbeam.network',
+  moonbeam: [
+    'https://rpc.api.moonbeam.network',
+    'https://moonbeam.public.blastapi.io',
+    'https://moonbeam-rpc.publicnode.com',
+  ],
+  moonriver: [
+    'https://rpc.api.moonriver.moonbeam.network',
+    'https://moonriver.public.blastapi.io',
+    'https://moonriver-rpc.publicnode.com',
+  ],
 };
-
-// ── Staking precompile ────────────────────────────────────────────────────────
 
 const PRECOMPILE = '0x0000000000000000000000000000000000000800';
 
 const ABI = [
-  // Current round info: returns (currentRound, firstBlock, length)
-  'function round() view returns (uint256 current, uint256 first, uint256 length)',
-  // Whether a collator is in the current active set
-  'function isSelectedCandidate(address candidate) view returns (bool)',
-  // Points awarded to a candidate in a given round (0 early in round is normal)
-  'function awardedPoints(uint32 round, address candidate) view returns (uint32)',
+  'function round() view returns (uint256, uint256, uint256)',
+  'function isSelectedCandidate(address) view returns (bool)',
+  'function awardedPoints(uint32, address) view returns (uint32)',
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -70,30 +73,40 @@ async function sendTelegram(message) {
 // ── On-chain query ────────────────────────────────────────────────────────────
 
 async function queryCollator(address, network) {
-  const provider = new ethers.JsonRpcProvider(RPC[network]);
-  const staking  = new ethers.Contract(PRECOMPILE, ABI, provider);
+  const rpcUrls = RPC[network];
+  if (!rpcUrls) throw new Error(`Unknown network: ${network}`);
 
-  const [roundData, isActive] = await Promise.all([
-    staking.round(),
-    staking.isSelectedCandidate(address),
-  ]);
-
-  const currentRound = Number(roundData.current);
-  const firstBlock   = Number(roundData.first);
-  const roundLength  = Number(roundData.length);
-
-  // awardedPoints is only meaningful while active.
-  // It starts at 0 at the beginning of each round and increments as blocks are produced.
-  let points = null;
-  if (isActive) {
+  let lastError;
+  for (const rpcUrl of rpcUrls) {
     try {
-      points = Number(await staking.awardedPoints(currentRound, address));
-    } catch (_) {
-      // Not fatal — some RPC nodes may not expose this in all conditions.
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
+      const staking  = new ethers.Contract(PRECOMPILE, ABI, provider);
+
+      const [roundData, isActive] = await Promise.all([
+        staking.round(),
+        staking.isSelectedCandidate(address),
+      ]);
+
+      const currentRound = Number(roundData[0]);
+      const firstBlock   = Number(roundData[1]);
+      const roundLength  = Number(roundData[2]);
+
+      let points = null;
+      if (isActive) {
+        try {
+          points = Number(await staking.awardedPoints(currentRound, address));
+        } catch (_) {}
+      }
+
+      console.log(`  ✓ RPC: ${rpcUrl}`);
+      return { currentRound, firstBlock, roundLength, isActive, points };
+    } catch (err) {
+      lastError = err;
+      console.log(`  ✗ RPC failed (${rpcUrl}): ${err.message}`);
     }
   }
 
-  return { currentRound, firstBlock, roundLength, isActive, points };
+  throw lastError;
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
