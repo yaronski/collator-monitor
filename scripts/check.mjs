@@ -66,6 +66,16 @@ async function sendTelegram(message) {
   }
 }
 
+function withTimeout(promise, ms) {
+  return new Promise((_, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Timeout after ${ms}ms`)), ms);
+    promise.then(
+      (v) => { clearTimeout(timer); return v; },
+      (e) => { clearTimeout(timer); throw e; }
+    );
+  });
+}
+
 async function queryCollator(address, network) {
   const rpcUrls = RPC[network];
   if (!rpcUrls) throw new Error(`Unknown network: ${network}`);
@@ -73,20 +83,20 @@ async function queryCollator(address, network) {
   let lastError;
   for (const rpcUrl of rpcUrls) {
     try {
-      const provider = new ethers.JsonRpcProvider(rpcUrl, { timeout: 15000 });
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
       const contract = new ethers.Contract(PRECOMPILE, STAKING_ABI, provider);
 
-      const [roundResult, isActive] = await Promise.all([
-        contract.round(),
-        contract.isSelectedCandidate(address),
-      ]);
+      const [roundResult, isActive] = await withTimeout(
+        Promise.all([contract.round(), contract.isSelectedCandidate(address)]),
+        20000
+      );
 
       const currentRound = Number(roundResult[0]);
 
       let points = null;
       if (isActive) {
         try {
-          points = Number(await contract.awardedPoints(currentRound, address));
+          points = Number(await withTimeout(contract.awardedPoints(currentRound, address), 10000));
         } catch (_) {}
       }
 
