@@ -32,7 +32,7 @@ const RPC = {
 const PRECOMPILE = '0x0000000000000000000000000000000000000800';
 
 const STAKING_ABI = [
-  'function round() view returns (uint256, uint256, uint256)',
+  'function round() view returns (uint256)',
   'function isSelectedCandidate(address) view returns (bool)',
   'function awardedPoints(uint32, address) view returns (uint32)',
 ];
@@ -91,7 +91,7 @@ async function queryCollator(address, network) {
         20000
       );
 
-      const currentRound = Number(roundResult[0]);
+      const currentRound = Number(roundResult);
 
       let points = null;
       if (isActive) {
