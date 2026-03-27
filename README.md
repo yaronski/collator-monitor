@@ -4,17 +4,19 @@ Tracks whether a Moonbeam or Moonriver collator is in the active set — without
 
 Uses `isSelectedCandidate(address)` and `awardedPoints(round, address)` from the ParachainStaking precompile (`0x0000000000000000000000000000000000000800`) via direct `eth_call`. Runs as a GitHub Actions cron every 30 minutes.
 
+**Privacy**: Collator addresses and Telegram chat IDs are stored in GitHub Secrets, not in the repo. The public `status.json` only shows truncated addresses (`0x1234…5678`).
+
 ## How it works
 
 ```
 GitHub Actions (every 30 min)
   └─ scripts/check.mjs
-       ├─ reads  config.json       (your collators)
+       ├─ reads  COLLATOR_CONFIG secret   (your collators - private)
        ├─ calls  isSelectedCandidate(address) on each
        ├─ calls  awardedPoints(round, address) for active collators
        ├─ detects transitions (active → inactive, or back)
        ├─ sends  Telegram alert on transition
-       └─ writes status.json       (committed back to repo)
+       └─ writes status.json              (addresses truncated, committed to repo)
 
 GitHub Pages
   └─ index.html fetches status.json every 5 min and renders the dashboard
@@ -27,14 +29,26 @@ The alert fires only after **2 consecutive inactive checks** (configurable) to a
 
 ## Quick start
 
-### 1. Fork / clone this repo
+### 1. Fork this repo
+
+Click "Fork" in the top right, then clone your fork:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/collator-monitor.git
 cd collator-monitor
 ```
 
-### 2. Edit `config.json`
+### 2. Add GitHub Secrets
+
+Go to **Settings → Secrets and variables → Actions** and add these repository secrets:
+
+| Secret | Required | Example value |
+|--------|----------|---------------|
+| `COLLATOR_CONFIG` | **Yes** | See below |
+| `TELEGRAM_BOT_TOKEN` | Optional | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
+| `TELEGRAM_CHAT_ID` | Optional (but required if token is set) | `123456789` or `123456789,987654321` |
+
+#### `COLLATOR_CONFIG` format
 
 ```json
 {
@@ -54,34 +68,31 @@ cd collator-monitor
 }
 ```
 
-> **Address format**: H160 / EVM format (`0x` + 40 hex chars).  
-> This is the address shown in Moonscan. NOT the SS58 / Substrate format.
+> **Address format**: H160 / EVM format (`0x` + 40 hex chars). This is the address shown in Moonscan, NOT the SS58/Substrate format.
 
-### 3. Push to GitHub
+#### Multiple Telegram recipients
 
-```bash
-git add config.json
-git commit -m "feat: add my collators"
-git push
+Separate chat IDs with commas in `TELEGRAM_CHAT_ID`:
+```
+123456789,987654321,111222333
 ```
 
-### 4. Enable GitHub Pages
+#### Getting Telegram credentials
+
+1. Message [@BotFather](https://t.me/botfather) → `/newbot` → copy the token
+2. Start a chat with your bot
+3. Get your chat ID: `https://api.telegram.org/botYOUR_TOKEN/getUpdates` (look for `chat.id`)
+
+### 3. Enable GitHub Pages
 
 1. Go to **Settings → Pages** in your GitHub repo
 2. Source: **Deploy from a branch**
 3. Branch: `main`, folder: `/ (root)`
-4. Save — your dashboard will be live at `https://YOUR_USERNAME.github.io/collator-monitor/`
+4. Save
 
-### 5. Set up Telegram alerts (optional but recommended)
+Your dashboard will be live at: `https://YOUR_USERNAME.github.io/collator-monitor/`
 
-1. Message [@BotFather](https://t.me/botfather) on Telegram → `/newbot` → copy the token
-2. Start a chat with your new bot, then find your chat ID via `https://api.telegram.org/botTOKEN/getUpdates`
-3. Go to **Settings → Secrets and variables → Actions** in your GitHub repo
-4. Add two repository secrets:
-   - `TELEGRAM_BOT_TOKEN` — the token from BotFather
-   - `TELEGRAM_CHAT_ID`   — your numeric chat ID
-
-### 6. Trigger first run
+### 4. Trigger first run
 
 Go to **Actions → Collator monitor → Run workflow** to run immediately without waiting 30 minutes.
 
@@ -91,8 +102,8 @@ Go to **Actions → Collator monitor → Run workflow** to run immediately witho
 
 | File | Purpose |
 |------|---------|
-| `config.json` | List of collators to watch. **Edit this.** |
-| `status.json` | Auto-updated by CI. Do not edit manually. |
+| `config.json` | Template only. Real config comes from `COLLATOR_CONFIG` secret. |
+| `status.json` | Auto-updated by CI. Addresses are truncated for privacy. |
 | `index.html` | Dashboard. Fetches `status.json` every 5 min. |
 | `scripts/check.mjs` | Node.js checker. Runs in GitHub Actions. |
 | `.github/workflows/monitor.yml` | Cron schedule + git-push logic. |
@@ -111,6 +122,8 @@ Go to **Actions → Collator monitor → Run workflow** to run immediately witho
 ---
 
 ## Local development
+
+For local testing, you can edit `config.json` directly (it will be used if `COLLATOR_CONFIG` secret is not set):
 
 ```bash
 npm install
