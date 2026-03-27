@@ -80,7 +80,8 @@ Separate chat IDs with commas in `TELEGRAM_CHAT_ID`:
 #### Getting Telegram credentials
 
 1. **Create bot**: Message [@BotFather](https://t.me/botfather) → `/newbot` → follow prompts → copy the token
-2. **Get your chat ID**:
+2. **Set bot profile pic** (fun part!): Message @BotFather → `/setuserpic` → select your bot → upload `telegramBotProfilePic.png` from this repo
+3. **Get your chat ID**:
    - Open Telegram and send any message to your new bot (e.g., `/start`)
    - **Immediately** open this URL in your browser (note the `bot` prefix):
      ```
@@ -117,6 +118,7 @@ Go to **Actions → Collator monitor → Run workflow** to run immediately witho
 | `index.html` | Dashboard. Fetches `status.json` every 5 min. |
 | `scripts/check.mjs` | Node.js checker. Runs in GitHub Actions. |
 | `.github/workflows/monitor.yml` | Cron schedule + git-push logic. |
+| `telegramBotProfilePic.png` | Profile pic for your Telegram bot (set via @BotFather) |
 
 ---
 
