@@ -73,7 +73,7 @@ async function queryCollator(address, network) {
   let lastError;
   for (const rpcUrl of rpcUrls) {
     try {
-      const provider = new ethers.JsonRpcProvider(rpcUrl);
+      const provider = new ethers.JsonRpcProvider(rpcUrl, { timeout: 15000 });
       const contract = new ethers.Contract(PRECOMPILE, STAKING_ABI, provider);
 
       const [roundResult, isActive] = await Promise.all([
