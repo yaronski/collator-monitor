@@ -1,4 +1,37 @@
 {
-  "lastUpdated": "2026-03-27T10:42:30.787Z",
-  "collators": {}
+  "lastUpdated": "2026-03-27T10:58:39.628Z",
+  "collators": {
+    "moonbeam:0x1002…c08e": {
+      "address": "0x1002…c08e",
+      "network": "moonbeam",
+      "label": "dude mb",
+      "statusText": "error",
+      "lastError": "invalid network object name or chainId (argument=\"network\", value={ \"timeout\": 15000 }, code=INVALID_ARGUMENT, version=6.16.0)",
+      "lastChecked": "2026-03-27T10:58:39.628Z"
+    },
+    "moonriver:0x693a…f385": {
+      "address": "0x693a…f385",
+      "network": "moonriver",
+      "label": "dude mr",
+      "statusText": "error",
+      "lastError": "invalid network object name or chainId (argument=\"network\", value={ \"timeout\": 15000 }, code=INVALID_ARGUMENT, version=6.16.0)",
+      "lastChecked": "2026-03-27T10:58:39.628Z"
+    },
+    "moonbeam:0xdd76…94d0": {
+      "address": "0xdD76…94d0",
+      "network": "moonbeam",
+      "label": "stavros mb",
+      "statusText": "error",
+      "lastError": "invalid network object name or chainId (argument=\"network\", value={ \"timeout\": 15000 }, code=INVALID_ARGUMENT, version=6.16.0)",
+      "lastChecked": "2026-03-27T10:58:39.628Z"
+    },
+    "moonriver:0x7d71…86d0": {
+      "address": "0x7d71…86d0",
+      "network": "moonriver",
+      "label": "stavros mr",
+      "statusText": "error",
+      "lastError": "invalid network object name or chainId (argument=\"network\", value={ \"timeout\": 15000 }, code=INVALID_ARGUMENT, version=6.16.0)",
+      "lastChecked": "2026-03-27T10:58:39.628Z"
+    }
+  }
 }
