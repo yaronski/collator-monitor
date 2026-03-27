@@ -2,14 +2,14 @@
 
 Tracks whether a Moonbeam or Moonriver collator is in the active set — without relying on delegation changes.
 
-Uses `isSelectedCandidate(address)` and `awardedPoints(round, address)` from the ParachainStaking precompile (`0x0000000000000000000000000000000000000800`) via direct `eth_call`. Runs as a GitHub Actions cron every 30 minutes.
+Uses `isSelectedCandidate(address)` and `awardedPoints(round, address)` from the ParachainStaking precompile (`0x0000000000000000000000000000000000000800`) via direct `eth_call`. Runs as a GitHub Actions cron every hour.
 
 **Privacy**: Collator addresses and Telegram chat IDs are stored in GitHub Secrets, not in the repo. The public `status.json` only shows truncated addresses (`0x1234…5678`).
 
 ## How it works
 
 ```
-GitHub Actions (every 30 min)
+GitHub Actions (every hour)
   └─ scripts/check.mjs
        ├─ reads  COLLATOR_CONFIG secret   (your collators - private)
        ├─ calls  isSelectedCandidate(address) on each
@@ -22,7 +22,7 @@ GitHub Pages
   └─ index.html fetches status.json every 5 min and renders the dashboard
 ```
 
-Rounds are ~2 hours. 30-minute polling gives ~4 checks per round.
+Rounds are ~2 hours. Hourly polling gives ~2 checks per round.
 The alert fires only after **2 consecutive inactive checks** (configurable) to avoid noise during round transitions.
 
 ---
@@ -79,9 +79,27 @@ Separate chat IDs with commas in `TELEGRAM_CHAT_ID`:
 
 #### Getting Telegram credentials
 
-1. Message [@BotFather](https://t.me/botfather) → `/newbot` → copy the token
-2. Start a chat with your bot
-3. Get your chat ID: `https://api.telegram.org/botYOUR_TOKEN/getUpdates` (look for `chat.id`)
+1. Message [@BotFather](https://t.me/botfather) → `/newbot` → follow prompts → copy the **token**
+2. **Important**: Send any message to your new bot first (e.g., `/start`)
+3. Visit in your browser: `https://api.telegram.org/botYOUR_TOKEN/getUpdates` (replace `YOUR_TOKEN`)
+4. Look for `"chat":{"id":123456789` — that number is your `TELEGRAM_CHAT_ID`
+
+**Example response:**
+```json
+{
+  "ok": true,
+  "result": [{
+    "message": {
+      "chat": {
+        "id": 123456789,
+        "first_name": "Your Name"
+      }
+    }
+  }]
+}
+```
+
+If you get `{"ok":true,"result":[]}`, you haven't messaged the bot yet.
 
 ### 3. Enable GitHub Pages
 
@@ -94,7 +112,7 @@ Your dashboard will be live at: `https://YOUR_USERNAME.github.io/collator-monito
 
 ### 4. Trigger first run
 
-Go to **Actions → Collator monitor → Run workflow** to run immediately without waiting 30 minutes.
+Go to **Actions → Collator monitor → Run workflow** to run immediately without waiting for the next scheduled run.
 
 ---
 
@@ -142,11 +160,11 @@ Edit `.github/workflows/monitor.yml`:
 
 ```yaml
 schedule:
-  - cron: '*/30 * * * *'   # every 30 min — change as needed (minimum: */5)
+  - cron: '0 * * * *'   # every hour — change as needed
 ```
 
 > GitHub Actions free tier has a monthly limit of 2,000 minutes.  
-> Every 30 min = ~1,440 runs/month × ~30 sec each ≈ **720 minutes/month** (well within limits).
+> Every hour = ~720 runs/month × ~30 sec each ≈ **360 minutes/month**.
 
 ---
 
@@ -161,4 +179,4 @@ Alternatively, deploy `index.html` and `status.json` to **Vercel** as a static s
 3. GitHub Actions still handles the cron and commits `status.json` to git
 4. Vercel auto-deploys on every push — so each status update triggers a redeploy
 
-> Note: Vercel free tier limits to 100 deployments/day, so every-30-min updates = 48/day — fine.
+> Note: Vercel free tier limits to 100 deployments/day, so hourly updates = 24/day — fine.
