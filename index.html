@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Collator Monitor</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -263,6 +265,59 @@ body {
   font-family: var(--mono);
 }
 
+/* ── Ranking table ────────────────────────────────────────────── */
+.ranking {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.ranking-label {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 6px;
+}
+.ranking-table {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 11px;
+  border-collapse: collapse;
+}
+.ranking-table td {
+  padding: 3px 0;
+  vertical-align: middle;
+}
+.ranking-table td:nth-child(1) {
+  width: 32px;
+  color: var(--text3);
+}
+.ranking-table td:nth-child(2) {
+  color: var(--text2);
+}
+.ranking-table td:nth-child(3) {
+  text-align: right;
+  white-space: nowrap;
+  color: var(--text2);
+}
+.ranking-table td:nth-child(4) {
+  text-align: right;
+  white-space: nowrap;
+  padding-left: 10px;
+}
+.ranking-table tr.self td {
+  color: var(--text);
+  font-weight: 500;
+}
+.ranking-table .gap-ahead { color: var(--green); }
+.ranking-table .gap-behind { color: var(--red); }
+.ranking-table .addr-link {
+  color: var(--text2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: #444;
+}
+
 /* ── Alert banner ────────────────────────────────────────────── */
 .alert-banner {
   display: none;
@@ -398,6 +453,29 @@ function renderStats(collators) {
   warnBox.className = 'stat' + (warnCount > 0 ? ' warn' : '');
 }
 
+function renderRanking(col) {
+  if (!col.ranking || !col.ranking.neighbors) return '';
+  const r = col.ranking;
+  const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
+  const token = col.network === 'moonbeam' ? 'GLMR' : 'MOVR';
+
+  const rows = r.neighbors.map(n => {
+    const short = n.address.slice(0, 6) + '\u2026' + n.address.slice(-4);
+    const addrHtml = n.isSelf
+      ? `<td>${short}</td>`
+      : `<td><a href="${subscanBase}${n.address}" target="_blank" class="addr-link">${short}</a></td>`;
+    const gapClass = n.gap.startsWith('+') ? 'gap-ahead' : n.gap.startsWith('-') ? 'gap-behind' : '';
+    const gapHtml = n.isSelf ? '<td>you</td>' : `<td class="${gapClass}">${n.gap} ${token}</td>`;
+    return `<tr class="${n.isSelf ? 'self' : ''}"><td>${n.rank}</td>${addrHtml}<td>${n.stakeFormatted} ${token}</td>${gapHtml}</tr>`;
+  }).join('');
+
+  return `
+    <div class="ranking">
+      <div class="ranking-label">Stake ranking \u00B7 #${r.rank} of ${r.totalSelected} \u00B7 ${r.myStake} ${token}</div>
+      <table class="ranking-table">${rows}</table>
+    </div>`;
+}
+
 function renderCards(collators) {
   const list = document.getElementById('cardList');
   const entries = Object.values(collators);
@@ -453,6 +531,7 @@ function renderCards(collators) {
           <div class="meta-val muted">${fmt(col.lastChecked)}</div>
         </div>
       </div>
+      ${renderRanking(col)}
       ${col.lastError ? `<div class="card-error">✗ ${col.lastError}</div>` : ''}
     </div>`;
   }).join('');

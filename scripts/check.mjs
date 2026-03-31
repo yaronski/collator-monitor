@@ -35,6 +35,8 @@ const STAKING_ABI = [
   'function round() view returns (uint256)',
   'function isSelectedCandidate(address) view returns (bool)',
   'function awardedPoints(uint32, address) view returns (uint32)',
+  'function selectedCandidates() view returns (address[])',
+  'function getCandidateTotalCounted(address) view returns (uint256)',
 ];
 
 const readJSON = (p) => JSON.parse(readFileSync(p, 'utf8'));
@@ -42,6 +44,13 @@ const writeJSON = (p, d) => writeFileSync(p, JSON.stringify(d, null, 2) + '\n');
 
 function shortAddr(addr) {
   return addr.slice(0, 6) + '…' + addr.slice(-4);
+}
+
+function formatStake(weiBigInt) {
+  const val = Number(ethers.formatEther(weiBigInt));
+  if (val >= 1000) return val.toFixed(1);
+  if (val >= 1) return val.toFixed(3);
+  return val.toFixed(6);
 }
 
 async function sendTelegram(message) {
@@ -111,6 +120,91 @@ async function queryCollator(address, network) {
   throw lastError;
 }
 
+async function fetchRanking(network) {
+  const rpcUrls = RPC[network];
+  if (!rpcUrls) return null;
+
+  for (const rpcUrl of rpcUrls) {
+    try {
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
+      const contract = new ethers.Contract(PRECOMPILE, STAKING_ABI, provider);
+
+      console.log(`  Fetching ranking for ${network}…`);
+      const candidates = await withTimeout(contract.selectedCandidates(), 20000);
+
+      const stakePromises = candidates.map(addr =>
+        contract.getCandidateTotalCounted(addr)
+          .then(stake => ({ address: addr.toLowerCase(), stake }))
+          .catch(() => ({ address: addr.toLowerCase(), stake: 0n }))
+      );
+
+      const results = await withTimeout(Promise.all(stakePromises), 45000);
+
+      results.sort((a, b) => {
+        if (b.stake > a.stake) return 1;
+        if (b.stake < a.stake) return -1;
+        return 0;
+      });
+
+      const ranked = results.map((r, i) => ({
+        rank: i + 1,
+        address: r.address,
+        stake: r.stake.toString(),
+        stakeFormatted: formatStake(r.stake),
+      }));
+
+      console.log(`  ✓ Ranking fetched: ${ranked.length} candidates from ${rpcUrl}`);
+      return ranked;
+    } catch (err) {
+      console.log(`  ✗ Ranking failed (${rpcUrl}): ${err.message}`);
+    }
+  }
+
+  console.log(`  ✗ Could not fetch ranking for ${network}`);
+  return null;
+}
+
+function getNeighbors(ranking, myAddress, count) {
+  if (!ranking || !ranking.length) return null;
+
+  const addr = myAddress.toLowerCase();
+  const myIndex = ranking.findIndex(r => r.address === addr);
+
+  if (myIndex === -1) {
+    return {
+      rank: null,
+      totalSelected: ranking.length,
+      myStake: null,
+      myStakeFormatted: null,
+      neighbors: null,
+    };
+  }
+
+  const me = ranking[myIndex];
+  const start = Math.max(0, myIndex - count);
+  const end = Math.min(ranking.length, myIndex + count + 1);
+  const slice = ranking.slice(start, end);
+
+  const neighbors = slice.map(r => {
+    const gapWei = BigInt(me.stake) - BigInt(r.stake);
+    const gapFormatted = Number(ethers.formatEther(gapWei < 0n ? -gapWei : gapWei));
+    return {
+      rank: r.rank,
+      address: r.address,
+      stakeFormatted: r.stakeFormatted,
+      gap: (gapWei >= 0n ? '+' : '-') + gapFormatted.toFixed(1),
+      isSelf: r.address === addr,
+    };
+  });
+
+  return {
+    rank: me.rank,
+    totalSelected: ranking.length,
+    myStake: me.stakeFormatted,
+    neighbors,
+  };
+}
+
 async function main() {
   const envConfig = process.env.COLLATOR_CONFIG ? JSON.parse(process.env.COLLATOR_CONFIG) : null;
   const fileConfig = readJSON(join(ROOT, 'config.json'));
@@ -122,6 +216,12 @@ async function main() {
   const now = new Date().toISOString();
 
   const next = { lastUpdated: now, collators: {} };
+
+  const networks = [...new Set(collators.map(c => c.network))];
+  const rankings = {};
+  for (const net of networks) {
+    rankings[net] = await fetchRanking(net);
+  }
 
   for (const col of collators) {
     if (!col.address || col.address === '0xYOUR_COLLATOR_ADDRESS_HERE') {
@@ -148,6 +248,7 @@ async function main() {
         statusText: 'error',
         lastError: err.message,
         lastChecked: now,
+        ranking: getNeighbors(rankings[col.network], col.address, 2),
       };
       continue;
     }
@@ -186,6 +287,11 @@ async function main() {
     console.log(`  Round: ${currentRound} | Active: ${isActive} | Points this round: ${pointsStr}`);
     if (!isActive) console.log(`  Consecutive inactive checks: ${consecutiveInactive}/${threshold}`);
 
+    const ranking = getNeighbors(rankings[col.network], col.address, 2);
+    if (ranking?.rank) {
+      console.log(`  Rank: ${ranking.rank}/${ranking.totalSelected} | Stake: ${ranking.myStake}`);
+    }
+
     next.collators[key] = {
       address: col.address.toLowerCase(),
       network: col.network,
@@ -198,6 +304,7 @@ async function main() {
       statusText,
       lastChecked: now,
       lastError: null,
+      ranking,
     };
   }
 
