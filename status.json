@@ -1,56 +1,56 @@
 {
-  "lastUpdated": "2026-04-01T14:23:12.639Z",
+  "lastUpdated": "2026-04-01T15:59:43.443Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
       "label": "dude mb",
       "isActive": true,
-      "points": 760,
-      "currentRound": 6013,
+      "points": 0,
+      "currentRound": 6014,
       "consecutiveInactive": 0,
       "alertedInactive": false,
-      "statusText": "active",
-      "lastChecked": "2026-04-01T14:23:12.639Z",
+      "statusText": "warning",
+      "lastChecked": "2026-04-01T15:59:43.443Z",
       "lastError": null,
       "ranking": {
-        "rank": 37,
+        "rank": 36,
         "totalSelected": 76,
-        "myStake": "3607075.3",
+        "myStake": "3627934.2",
         "neighbors": [
+          {
+            "rank": 34,
+            "address": "0x002ad15f48168f2b40083cc704833b91f278e2e6",
+            "stakeFormatted": "3739202.6",
+            "gap": "-111268.4",
+            "isSelf": false
+          },
           {
             "rank": 35,
             "address": "0x2ac328cb3a4aeada14290b5caf4e8406863d83bf",
             "stakeFormatted": "3675675.5",
-            "gap": "-68600.2",
+            "gap": "-47741.3",
             "isSelf": false
           },
           {
             "rank": 36,
-            "address": "0x4fadbd3a6e6ff1cd17ada64eb79be168ce32cf7c",
-            "stakeFormatted": "3625439.9",
-            "gap": "-18364.5",
-            "isSelf": false
-          },
-          {
-            "rank": 37,
             "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
-            "stakeFormatted": "3607075.3",
+            "stakeFormatted": "3627934.2",
             "gap": "+0.0",
             "isSelf": true
           },
           {
-            "rank": 38,
-            "address": "0xbb43c8f298ddb8094529b9708c53b732b3edbb6a",
-            "stakeFormatted": "3583753.6",
-            "gap": "+23321.7",
+            "rank": 37,
+            "address": "0x4fadbd3a6e6ff1cd17ada64eb79be168ce32cf7c",
+            "stakeFormatted": "3625472.5",
+            "gap": "+2461.7",
             "isSelf": false
           },
           {
-            "rank": 39,
-            "address": "0x3431e0de19a9eb54d71be71a2fddb7e7b3225643",
-            "stakeFormatted": "3549980.4",
-            "gap": "+57094.9",
+            "rank": 38,
+            "address": "0xbb43c8f298ddb8094529b9708c53b732b3edbb6a",
+            "stakeFormatted": "3583851.9",
+            "gap": "+44082.2",
             "isSelf": false
           }
         ]
@@ -61,12 +61,12 @@
       "network": "moonriver",
       "label": "dude mr",
       "isActive": true,
-      "points": 100,
+      "points": 400,
       "currentRound": 20726,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "statusText": "active",
-      "lastChecked": "2026-04-01T14:23:12.639Z",
+      "lastChecked": "2026-04-01T15:59:43.443Z",
       "lastError": null,
       "ranking": {
         "rank": 60,
@@ -116,51 +116,51 @@
       "network": "moonbeam",
       "label": "stavros mb",
       "isActive": true,
-      "points": 820,
-      "currentRound": 6013,
+      "points": 0,
+      "currentRound": 6014,
       "consecutiveInactive": 0,
       "alertedInactive": false,
-      "statusText": "active",
-      "lastChecked": "2026-04-01T14:23:12.639Z",
+      "statusText": "warning",
+      "lastChecked": "2026-04-01T15:59:43.443Z",
       "lastError": null,
       "ranking": {
         "rank": 41,
         "totalSelected": 76,
-        "myStake": "3424167.1",
+        "myStake": "3424461.9",
         "neighbors": [
           {
             "rank": 39,
             "address": "0x3431e0de19a9eb54d71be71a2fddb7e7b3225643",
-            "stakeFormatted": "3549980.4",
-            "gap": "-125813.3",
+            "stakeFormatted": "3550173.6",
+            "gap": "-125711.6",
             "isSelf": false
           },
           {
             "rank": 40,
             "address": "0xa345728816d83533a24bf1d980009f3b01cec2fe",
-            "stakeFormatted": "3547331.1",
-            "gap": "-123164.1",
+            "stakeFormatted": "3547600.8",
+            "gap": "-123138.9",
             "isSelf": false
           },
           {
             "rank": 41,
             "address": "0xdd760a8f8ce5e4b5f9ff436ee7790c603d6294d0",
-            "stakeFormatted": "3424167.1",
+            "stakeFormatted": "3424461.9",
             "gap": "+0.0",
             "isSelf": true
           },
           {
             "rank": 42,
             "address": "0x9eea5bc566031840743e3efc8f7919fc393e1573",
-            "stakeFormatted": "3352050.2",
-            "gap": "+72116.9",
+            "stakeFormatted": "3352137.2",
+            "gap": "+72324.7",
             "isSelf": false
           },
           {
             "rank": 43,
             "address": "0x8730b791ee9fd8abf80caa654f4e4c5626ddbeee",
-            "stakeFormatted": "3275001.9",
-            "gap": "+149165.2",
+            "stakeFormatted": "3275178.9",
+            "gap": "+149283.0",
             "isSelf": false
           }
         ]
@@ -171,12 +171,12 @@
       "network": "moonriver",
       "label": "stavros mr",
       "isActive": true,
-      "points": 60,
+      "points": 280,
       "currentRound": 20726,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "statusText": "active",
-      "lastChecked": "2026-04-01T14:23:12.639Z",
+      "lastChecked": "2026-04-01T15:59:43.443Z",
       "lastError": null,
       "ranking": {
         "rank": 65,
