@@ -251,9 +251,9 @@ function getNeighbors(ranking, myAddress, count, names, tokenPrice) {
     const gapWei = BigInt(me.stake) - BigInt(r.stake);
     const absGapWei = gapWei < 0n ? -gapWei : gapWei;
     const gapNum = Number(ethers.formatEther(absGapWei));
-    const sign = gapWei >= 0n ? '+' : '-';
+    const sign = gapWei > 0n ? '-' : '+';
     const rStakeNum = Number(ethers.formatEther(BigInt(r.stake)));
-    const pctDiff = myStakeNum > 0 ? ((myStakeNum - rStakeNum) / rStakeNum) * 100 : 0;
+    const pctDiff = rStakeNum > 0 ? ((rStakeNum - myStakeNum) / myStakeNum) * 100 : 0;
 
     const name = names[r.address] || shortAddr(r.address);
 
