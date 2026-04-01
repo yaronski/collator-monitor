@@ -46,11 +46,20 @@ function shortAddr(addr) {
   return addr.slice(0, 6) + '…' + addr.slice(-4);
 }
 
+function formatCompact(num) {
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'm';
+  if (num >= 1_000) return (num / 1_000).toFixed(1) + 'k';
+  return num.toFixed(1);
+}
+
 function formatStake(weiBigInt) {
-  const val = Number(ethers.formatEther(weiBigInt));
-  if (val >= 1000) return val.toFixed(1);
-  if (val >= 1) return val.toFixed(3);
-  return val.toFixed(6);
+  return formatCompact(Number(ethers.formatEther(weiBigInt)));
+}
+
+function formatUsd(usd) {
+  if (usd >= 1_000_000) return '$' + (usd / 1_000_000).toFixed(1) + 'm';
+  if (usd >= 1_000) return '$' + (usd / 1_000).toFixed(1) + 'k';
+  return '$' + usd.toFixed(1);
 }
 
 async function sendTelegram(message) {
@@ -83,6 +92,57 @@ function withTimeout(promise, ms) {
       (e) => { clearTimeout(timer); reject(e); }
     );
   });
+}
+
+async function fetchCollatorNames(network) {
+  const subscanBase = network === 'moonbeam'
+    ? 'https://moonbeam.subscan.io'
+    : 'https://moonriver.subscan.io';
+
+  const names = {};
+  try {
+    let page = 0;
+    const pageSize = 100;
+    let total = Infinity;
+
+    while (page * pageSize < total) {
+      const res = await fetch(`${subscanBase}/api/v2/scan/staking/collators`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ row: pageSize, page }),
+      });
+      if (!res.ok) break;
+      const data = await res.json();
+      if (data.code !== 0 || !data.data?.list) break;
+
+      total = data.data.count || 0;
+      for (const c of data.data.list) {
+        const addr = (c.stash_account_display?.address || c.account || '').toLowerCase();
+        const name = c.stash_account_display?.display || c.account_display?.display || '';
+        if (addr && name) names[addr] = name;
+      }
+      page++;
+    }
+    console.log(`  ✓ Names fetched: ${Object.keys(names).length} collators from ${subscanBase}`);
+  } catch (err) {
+    console.log(`  ✗ Names failed (${subscanBase}): ${err.message}`);
+  }
+  return names;
+}
+
+async function fetchPrices() {
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=moonbeam,moonriver&vs_currencies=usd');
+    if (!res.ok) return null;
+    const data = await res.json();
+    return {
+      moonbeam: data.moonbeam?.usd ?? null,
+      moonriver: data.moonriver?.usd ?? null,
+    };
+  } catch (err) {
+    console.log(`  ✗ Price fetch failed: ${err.message}`);
+    return null;
+  }
 }
 
 async function queryCollator(address, network) {
@@ -164,7 +224,7 @@ async function fetchRanking(network) {
   return null;
 }
 
-function getNeighbors(ranking, myAddress, count) {
+function getNeighbors(ranking, myAddress, count, names, tokenPrice) {
   if (!ranking || !ranking.length) return null;
 
   const addr = myAddress.toLowerCase();
@@ -181,26 +241,45 @@ function getNeighbors(ranking, myAddress, count) {
   }
 
   const me = ranking[myIndex];
+  const myStakeNum = Number(ethers.formatEther(BigInt(me.stake)));
   const start = Math.max(0, myIndex - count);
   const end = Math.min(ranking.length, myIndex + count + 1);
   const slice = ranking.slice(start, end);
+  const token = 'GLMR';
 
   const neighbors = slice.map(r => {
     const gapWei = BigInt(me.stake) - BigInt(r.stake);
-    const gapFormatted = Number(ethers.formatEther(gapWei < 0n ? -gapWei : gapWei));
-    return {
+    const absGapWei = gapWei < 0n ? -gapWei : gapWei;
+    const gapNum = Number(ethers.formatEther(absGapWei));
+    const sign = gapWei >= 0n ? '+' : '-';
+    const rStakeNum = Number(ethers.formatEther(BigInt(r.stake)));
+    const pctDiff = myStakeNum > 0 ? ((myStakeNum - rStakeNum) / rStakeNum) * 100 : 0;
+
+    const name = names[r.address] || shortAddr(r.address);
+
+    const result = {
       rank: r.rank,
       address: r.address,
+      name,
       stakeFormatted: r.stakeFormatted,
-      gap: (gapWei >= 0n ? '+' : '-') + gapFormatted.toFixed(1),
+      gap: sign + formatCompact(gapNum),
+      gapPercent: (pctDiff >= 0 ? '+' : '') + pctDiff.toFixed(1) + '%',
       isSelf: r.address === addr,
     };
+
+    if (tokenPrice && !result.isSelf) {
+      const gapUsd = gapNum * tokenPrice;
+      result.gapUsd = sign + formatUsd(gapUsd);
+    }
+
+    return result;
   });
 
   return {
     rank: me.rank,
     totalSelected: ranking.length,
     myStake: me.stakeFormatted,
+    myStakeNum,
     neighbors,
   };
 }
@@ -218,9 +297,19 @@ async function main() {
   const next = { lastUpdated: now, collators: {} };
 
   const networks = [...new Set(collators.map(c => c.network))];
+
+  console.log('\nFetching prices…');
+  const prices = await fetchPrices();
+  if (prices) {
+    console.log(`  GLMR: $${prices.moonbeam} | MOVR: $${prices.moonriver}`);
+  }
+  if (prices) next.prices = prices;
+
   const rankings = {};
+  const allNames = {};
   for (const net of networks) {
     rankings[net] = await fetchRanking(net);
+    allNames[net] = await fetchCollatorNames(net);
   }
 
   for (const col of collators) {
@@ -229,9 +318,11 @@ async function main() {
       continue;
     }
 
-    const key = `${col.network}:${shortAddr(col.address.toLowerCase())}`;
+    const addr = col.address.toLowerCase();
+    const key = `${col.network}:${shortAddr(addr)}`;
     const p = prev.collators?.[key] ?? {};
-    const label = col.label || shortAddr(col.address);
+    const onChainName = allNames[col.network]?.[addr];
+    const label = onChainName || col.label || shortAddr(addr);
 
     console.log(`\nChecking ${label} (${col.network})…`);
 
@@ -242,13 +333,13 @@ async function main() {
       console.error(`  ✗ RPC error: ${err.message}`);
       next.collators[key] = {
         ...p,
-        address: col.address.toLowerCase(),
+        address: addr,
         network: col.network,
-        label: col.label || '',
+        label,
         statusText: 'error',
         lastError: err.message,
         lastChecked: now,
-        ranking: getNeighbors(rankings[col.network], col.address, 2),
+        ranking: getNeighbors(rankings[col.network], col.address, 2, allNames[col.network] || {}, prices?.[col.network]),
       };
       continue;
     }
@@ -287,15 +378,15 @@ async function main() {
     console.log(`  Round: ${currentRound} | Active: ${isActive} | Points this round: ${pointsStr}`);
     if (!isActive) console.log(`  Consecutive inactive checks: ${consecutiveInactive}/${threshold}`);
 
-    const ranking = getNeighbors(rankings[col.network], col.address, 2);
+    const ranking = getNeighbors(rankings[col.network], col.address, 2, allNames[col.network] || {}, prices?.[col.network]);
     if (ranking?.rank) {
       console.log(`  Rank: ${ranking.rank}/${ranking.totalSelected} | Stake: ${ranking.myStake}`);
     }
 
     next.collators[key] = {
-      address: col.address.toLowerCase(),
+      address: addr,
       network: col.network,
-      label: col.label || '',
+      label,
       isActive,
       points,
       currentRound,

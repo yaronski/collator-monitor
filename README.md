@@ -160,6 +160,17 @@ schedule:
 > GitHub Actions free tier has a monthly limit of 2,000 minutes.  
 > Every hour = ~720 runs/month × ~30 sec each ≈ **360 minutes/month**.
 
+### Self-hosted runner (unlimited minutes)
+
+If you run out of GitHub Actions minutes, you can run the workflow on your own machine — for free, unlimited:
+
+1. Go to **Settings → Actions → Runners → New self-hosted runner** in your repo
+2. Download and configure the runner binary for your OS
+3. Install as a service (starts on boot): `./svc.sh install && ./svc.sh start`
+4. Edit `.github/workflows/monitor.yml` — change `runs-on: ubuntu-latest` to `runs-on: self-hosted`
+
+GitHub still handles scheduling and logging, but the job runs on your machine. Requires your machine to be on when the cron fires.
+
 ---
 
 ## Private deployment
