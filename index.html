@@ -132,6 +132,24 @@ body {
 
 .ranking { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 
+.sparkline { margin: 0 0 10px; }
+.sparkline-track {
+  position: relative; height: 4px; background: var(--bg4);
+  border-radius: 2px;
+}
+.sparkline-dot {
+  position: absolute; top: -3px; width: 10px; height: 10px;
+  border-radius: 50%; transform: translateX(-50%);
+}
+.sparkline-dot.safe   { background: var(--green); box-shadow: 0 0 6px rgba(74,222,128,0.5); }
+.sparkline-dot.caution { background: var(--amber); box-shadow: 0 0 4px rgba(251,191,36,0.4); }
+.sparkline-dot.danger  { background: var(--red); box-shadow: 0 0 6px rgba(248,113,113,0.5); }
+.sparkline-labels {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 9px; color: var(--text3);
+  margin-top: 3px;
+}
+
 .ranking-table { width: 100%; font-family: var(--mono); font-size: 11px; border-collapse: collapse; table-layout: fixed; }
 .ranking-table th {
   font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em;
@@ -154,7 +172,63 @@ body {
 .ranking-table tr.self td { color: var(--text); font-weight: 500; background: rgba(255,255,255,0.03); }
 .ranking-table .gap-ahead  { color: var(--green); }
 .ranking-table .gap-behind { color: var(--red); }
+.ranking-table .margin-safe   { color: var(--green); }
+.ranking-table .margin-danger { color: var(--red); }
 .ranking-table .addr-link { color: var(--text2); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: #444; }
+
+.threshold-section { margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.12); }
+.threshold-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 4px; font-family: var(--mono); font-size: 9px;
+  color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.threshold-header::before, .threshold-header::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+}
+
+.fullset-btn {
+  display: block; width: 100%; margin-top: 8px;
+  font-family: var(--mono); font-size: 10px; color: var(--text2);
+  cursor: pointer; padding: 6px 0; border: none; background: none;
+  text-align: center; letter-spacing: 0.03em;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.fullset-btn:hover { color: var(--text); }
+
+.fullset-wrap {
+  display: none; margin-top: 8px;
+  max-height: 360px; overflow-y: auto;
+  border: 1px solid rgba(255,255,255,0.06); border-radius: 4px;
+}
+.fullset-wrap::-webkit-scrollbar { width: 4px; }
+.fullset-wrap::-webkit-scrollbar-track { background: transparent; }
+.fullset-wrap::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+
+.fullset-table {
+  width: 100%; font-family: var(--mono); font-size: 10px;
+  border-collapse: collapse; table-layout: fixed;
+}
+.fullset-table th {
+  font-size: 8px; color: var(--text3); text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 4px 6px; font-weight: 400;
+  text-align: right; position: sticky; top: 0; background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+.fullset-table th:nth-child(1) { width: 30px; text-align: left; }
+.fullset-table th:nth-child(2) { text-align: left; }
+.fullset-table td { padding: 2px 6px; vertical-align: middle; }
+.fullset-table td:nth-child(1) { color: var(--text3); text-align: left; font-size: 9px; }
+.fullset-table td:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fullset-table td:nth-child(3) { text-align: right; white-space: nowrap; }
+.fullset-table tr.self td { color: var(--text); font-weight: 500; background: rgba(74,222,128,0.05); }
+.fullset-table tr.cutoff td { border-top: 1px dashed rgba(255,255,255,0.15); color: var(--text2); }
+.fullset-table .addr-link { color: var(--text2); text-decoration: none; }
+.fullset-table .addr-link:hover { text-decoration: underline; }
+
+.stake-bar-wrap { display: inline-block; width: 50px; height: 3px; background: rgba(255,255,255,0.04); border-radius: 1px; vertical-align: middle; margin-left: 4px; }
+.stake-bar-fill { display: block; height: 100%; border-radius: 1px; background: var(--text3); opacity: 0.3; }
+.fullset-table tr.self .stake-bar-fill { background: var(--green); opacity: 0.6; }
+.fullset-table tr.cutoff .stake-bar-fill { background: var(--amber); opacity: 0.4; }
 
 .alert-banner { display: none; background: var(--red-bg); border: 1px solid var(--red-d); border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px; color: var(--red); font-size: 13px; }
 .alert-banner.show { display: block; }
@@ -179,10 +253,13 @@ body {
   .meta-val { font-size: 12px; }
   .ranking-table { font-size: 10px; }
   .ranking-table td, .ranking-table th { white-space: normal; word-break: break-word; }
+  .fullset-table { font-size: 9px; }
+  .fullset-table td, .fullset-table th { white-space: normal; word-break: break-word; }
   .stats { flex-direction: column; }
   .stat { padding: 10px 14px; }
   .stat-value { font-size: 18px; }
   .footer { flex-direction: column; gap: 4px; }
+  .stake-bar-wrap { display: none; }
 }
 </style>
 </head>
@@ -221,6 +298,7 @@ body {
 <script>
 const REFRESH_MS = 5 * 60 * 1000;
 let countdownInterval, countdownSec;
+const expandedCards = {};
 
 function fmt(iso) {
   if (!iso) return '\u2013';
@@ -252,75 +330,149 @@ function renderStats(collators) {
   document.getElementById('statErrorBox').className = 'stat' + (ec > 0 ? ' bad' : '');
 }
 
-function renderRanking(col) {
-  if (!col.ranking || !col.ranking.neighbors) return '';
-  const r = col.ranking;
-  const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
-  const token = col.network === 'moonbeam' ? 'GLMR' : 'MOVR';
-
-  const hasUsd = r.neighbors.some(n => n.gapUsd);
-
-  const rows = r.neighbors.map(n => {
-    const name = n.name || (n.address.slice(0, 6) + '\u2026' + n.address.slice(-4));
-    const addrHtml = n.isSelf
-      ? '<td>' + name + '</td>'
-      : '<td><a href="' + subscanBase + n.address + '" target="_blank" class="addr-link">' + name + '</a></td>';
-
-    let gapCell = '';
-    if (n.isSelf) {
-      gapCell = '<td></td><td></td>' + (hasUsd ? '<td></td>' : '');
-    } else {
-      const gapClass = n.gap.startsWith('+') ? 'gap-ahead' : n.gap.startsWith('-') ? 'gap-behind' : '';
-      const pctStr = n.gapPercent || '';
-      const usdStr = n.gapUsd || '';
-      gapCell = '<td class="' + gapClass + '">' + n.gap + ' ' + token + '</td>'
-        + '<td class="' + gapClass + '">' + pctStr + '</td>'
-        + (hasUsd ? '<td class="' + gapClass + '">' + usdStr + '</td>' : '');
-    }
-
-    return '<tr class="' + (n.isSelf ? 'self' : '') + '">'
-      + '<td>#' + n.rank + '</td>'
-      + addrHtml
-      + '<td style="text-align:right">' + n.stakeFormatted + ' ' + token + '</td>'
-      + gapCell
-      + '</tr>';
-  }).join('');
-
-  const thCols = '<th>#</th><th style="text-align:left">Collator</th><th>Stake</th><th>Gap</th><th>%</th>'
-    + (hasUsd ? '<th>USD</th>' : '');
-
-  return '<div class="ranking">'
-    + '<table class="ranking-table"><tr>' + thCols + '</tr>' + rows + '</table>'
+function sparklineHtml(rank, total) {
+  if (!rank || !total || total < 2) return '';
+  const pct = ((rank - 1) / (total - 1)) * 100;
+  const dotClass = pct < 70 ? 'safe' : pct < 90 ? 'caution' : 'danger';
+  return '<div class="sparkline">'
+    + '<div class="sparkline-track"><div class="sparkline-dot ' + dotClass + '" style="left:' + pct.toFixed(1) + '%"></div></div>'
+    + '<div class="sparkline-labels"><span>#1</span><span>#' + total + '</span></div>'
     + '</div>';
 }
 
-function renderCards(collators, lastChecked) {
-  const list = document.getElementById('cardList');
-  const entries = Object.values(collators);
+function renderRanking(col, fullRanking) {
+  const r = col.ranking;
+  if (!r) return '';
+  const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
+  const token = col.network === 'moonbeam' ? 'GLMR' : 'MOVR';
+  const cardKey = col.network + '-' + col.address.slice(2, 12);
+
+  let html = '<div class="ranking">';
+
+  if (r.rank && r.totalSelected) {
+    html += sparklineHtml(r.rank, r.totalSelected);
+  }
+
+  if (r.neighbors && r.neighbors.length) {
+    const hasUsd = r.neighbors.some(n => n.gapUsd);
+    const rows = r.neighbors.map(n => {
+      const name = n.name || (n.address.slice(0, 6) + '\u2026' + n.address.slice(-4));
+      const addrHtml = n.isSelf
+        ? '<td>' + name + '</td>'
+        : '<td><a href="' + subscanBase + n.address + '" target="_blank" class="addr-link">' + name + '</a></td>';
+      let gapCell = '';
+      if (n.isSelf) {
+        gapCell = '<td></td><td></td>' + (hasUsd ? '<td></td>' : '');
+      } else {
+        const gapClass = n.gap.startsWith('+') ? 'gap-ahead' : n.gap.startsWith('-') ? 'gap-behind' : '';
+        gapCell = '<td class="' + gapClass + '">' + n.gap + ' ' + token + '</td>'
+          + '<td class="' + gapClass + '">' + (n.gapPercent || '') + '</td>'
+          + (hasUsd ? '<td class="' + gapClass + '">' + (n.gapUsd || '') + '</td>' : '');
+      }
+      return '<tr class="' + (n.isSelf ? 'self' : '') + '">'
+        + '<td>#' + n.rank + '</td>' + addrHtml
+        + '<td style="text-align:right">' + n.stakeFormatted + ' ' + token + '</td>'
+        + gapCell + '</tr>';
+    }).join('');
+
+    const thCols = '<th>#</th><th style="text-align:left">Collator</th><th>Stake</th><th>Gap</th><th>%</th>'
+      + (hasUsd ? '<th>USD</th>' : '');
+    html += '<table class="ranking-table"><tr>' + thCols + '</tr>' + rows + '</table>';
+  }
+
+  if (r.threshold) {
+    const t = r.threshold;
+    const tName = t.name || (t.address.slice(0, 6) + '\u2026' + t.address.slice(-4));
+    const marginClass = t.margin && !t.margin.startsWith('-') ? 'margin-safe' : 'margin-danger';
+
+    html += '<div class="threshold-section">';
+    html += '<div class="threshold-header">Cutoff (#' + t.rank + ')</div>';
+    html += '<table class="ranking-table"><tr>';
+    html += '<td>#' + t.rank + '</td>';
+    html += '<td><a href="' + subscanBase + t.address + '" target="_blank" class="addr-link">' + tName + '</a></td>';
+    html += '<td style="text-align:right">' + t.stakeFormatted + ' ' + token + '</td>';
+    if (t.margin) {
+      html += '<td class="' + marginClass + '">' + t.margin + ' ' + token + '</td>';
+      html += '<td class="' + marginClass + '">' + (t.marginPercent || '') + '</td>';
+      html += (t.marginUsd ? '<td class="' + marginClass + '">' + t.marginUsd + '</td>' : '');
+    } else {
+      html += '<td colspan="3" style="color:var(--text3);text-align:center;font-size:9px">\u2190 minimum to enter set</td>';
+    }
+    html += '</tr></table></div>';
+  }
+
+  if (fullRanking && fullRanking.length > 0) {
+    const isExp = expandedCards[cardKey];
+    html += '<button class="fullset-btn" id="fullbtn-' + cardKey + '" onclick="toggleFullSet(\'' + cardKey + '\',' + fullRanking.length + ')">'
+      + (isExp ? '\u25BE Hide full set' : '\u25B8 Show all ' + fullRanking.length + ' collators')
+      + '</button>';
+
+    const maxStake = fullRanking[0].stakeEther || 1;
+    const total = r.totalSelected || fullRanking.length;
+    const selfAddr = col.address.toLowerCase();
+    const fsRows = fullRanking.map(entry => {
+      const eName = entry.address.slice(0, 6) + '\u2026' + entry.address.slice(-4);
+      const isSelf = entry.address === selfAddr;
+      const isCutoff = entry.rank === total;
+      const barPct = Math.max(1, Math.round((entry.stakeEther / maxStake) * 100));
+      return '<tr class="' + (isSelf ? 'self' : '') + (isCutoff ? ' cutoff' : '') + '">'
+        + '<td>' + entry.rank + '</td>'
+        + '<td>' + (isSelf ? (col.label || eName) : '<a href="' + subscanBase + entry.address + '" target="_blank" class="addr-link">' + eName + '</a>') + '</td>'
+        + '<td>' + entry.stakeFormatted + ' ' + token
+        + ' <span class="stake-bar-wrap"><span class="stake-bar-fill" style="width:' + barPct + '%"></span></span>'
+        + '</td></tr>';
+    }).join('');
+
+    html += '<div class="fullset-wrap" id="fullset-' + cardKey + '" style="display:' + (isExp ? 'block' : 'none') + '">';
+    html += '<table class="fullset-table">';
+    html += '<thead><tr><th>#</th><th style="text-align:left">Collator</th><th>Stake</th></tr></thead>';
+    html += '<tbody>' + fsRows + '</tbody></table></div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function toggleFullSet(key, total) {
+  expandedCards[key] = !expandedCards[key];
+  var wrap = document.getElementById('fullset-' + key);
+  var btn = document.getElementById('fullbtn-' + key);
+  if (expandedCards[key]) {
+    wrap.style.display = 'block';
+    btn.innerHTML = '\u25BE Hide full set';
+  } else {
+    wrap.style.display = 'none';
+    btn.innerHTML = '\u25B8 Show all ' + total + ' collators';
+  }
+}
+
+function renderCards(collators, allRankings) {
+  var list = document.getElementById('cardList');
+  var entries = Object.values(collators);
   if (!entries.length) {
     list.innerHTML = '<div class="empty">No collators in status.json yet.<br>Add an address to config.json and run the GitHub Actions workflow.</div>';
     return;
   }
-  const statusOrder = { inactive:0, error:1, active:3 };
-  const networkOrder = { moonbeam:0, moonriver:1 };
-  entries.sort((a,b) => {
-    const n = (networkOrder[a.network]??9) - (networkOrder[b.network]??9);
-    return n !== 0 ? n : (statusOrder[a.statusText]??9) - (statusOrder[b.statusText]??9);
+  var statusOrder = { inactive:0, error:1, active:3 };
+  var networkOrder = { moonbeam:0, moonriver:1 };
+  entries.sort(function(a,b) {
+    var n = (networkOrder[a.network]||9) - (networkOrder[b.network]||9);
+    return n !== 0 ? n : (statusOrder[a.statusText]||9) - (statusOrder[b.statusText]||9);
   });
 
-  list.innerHTML = entries.map(col => {
-    const st = col.statusText || 'error';
-    const label = col.label || col.address;
-    const pts = col.points != null ? col.points : '\u2013';
-    const consec = col.consecutiveInactive > 0
+  list.innerHTML = entries.map(function(col) {
+    var st = col.statusText || 'error';
+    var label = col.label || col.address;
+    var pts = col.points != null ? col.points : '\u2013';
+    var consec = col.consecutiveInactive > 0
       ? '<div class="meta-item"><div class="meta-key">Consec. inactive</div><div class="meta-val highlight">' + col.consecutiveInactive + '</div></div>'
       : '';
-    const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
-    const networkLabel = col.network === 'moonbeam' ? 'Moonbeam' : 'Moonriver';
-
-    const rankHtml = (col.ranking && col.ranking.rank)
+    var subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
+    var networkLabel = col.network === 'moonbeam' ? 'Moonbeam' : 'Moonriver';
+    var rankHtml = (col.ranking && col.ranking.rank)
       ? '<span class="card-rank"><span class="rank-num">#' + col.ranking.rank + '</span> of ' + col.ranking.totalSelected + '</span>'
       : '';
+    var fullRanking = allRankings[col.network] || null;
 
     return '<div class="card status-' + st + ' network-' + col.network + '">'
       + '<div class="card-row">'
@@ -331,38 +483,39 @@ function renderCards(collators, lastChecked) {
       + '</div>'
       + '<div class="card-meta">'
       + '<div class="meta-item"><div class="meta-key">Network</div><div class="meta-val net-label ' + col.network + '">' + networkLabel + '</div></div>'
-      + '<div class="meta-item"><div class="meta-key">Round</div><div class="meta-val ' + (!col.isActive ? 'highlight' : '') + '">' + (col.currentRound ?? '\u2013') + '</div></div>'
+      + '<div class="meta-item"><div class="meta-key">Round</div><div class="meta-val ' + (!col.isActive ? 'highlight' : '') + '">' + (col.currentRound || '\u2013') + '</div></div>'
       + '<div class="meta-item"><div class="meta-key">Points this round</div><div class="meta-val">' + pts + '</div></div>'
       + consec
       + '</div>'
-      + renderRanking(col)
+      + renderRanking(col, fullRanking)
       + (col.lastError ? '<div class="card-error">\u2717 ' + col.lastError + '</div>' : '')
       + '</div>';
   }).join('');
 }
 
 function renderAlert(collators) {
-  const banner = document.getElementById('alertBanner');
-  const inactive = Object.values(collators).filter(c => c.statusText === 'inactive');
+  var banner = document.getElementById('alertBanner');
+  var inactive = Object.values(collators).filter(function(c) { return c.statusText === 'inactive'; });
   if (!inactive.length) { banner.classList.remove('show'); return; }
-  const names = inactive.map(c => '<strong>' + (c.label || c.address) + '</strong>').join(', ');
+  var names = inactive.map(function(c) { return '<strong>' + (c.label || c.address) + '</strong>'; }).join(', ');
   banner.innerHTML = '\u26A0 ' + inactive.length + ' collator' + (inactive.length > 1 ? 's are' : ' is') + ' NOT in the active set: ' + names;
   banner.classList.add('show');
 }
 
 async function load() {
   try {
-    const res = await fetch('status.json?t=' + Date.now());
+    var res = await fetch('status.json?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const collators = data.collators || {};
-    const hasIssue = Object.values(collators).some(c => c.statusText === 'inactive');
-    const hasError = Object.values(collators).some(c => c.statusText === 'error');
+    var data = await res.json();
+    var collators = data.collators || {};
+    var allRankings = data.rankings || {};
+    var hasIssue = Object.values(collators).some(function(c) { return c.statusText === 'inactive'; });
+    var hasError = Object.values(collators).some(function(c) { return c.statusText === 'error'; });
     setIndicator(hasIssue ? 'error' : hasError ? 'stale' : 'live');
     document.getElementById('topbarMeta').innerHTML =
       'Updated ' + ago(data.lastUpdated) + '<br>' + fmt(data.lastUpdated);
     renderStats(collators);
-    renderCards(collators, data.lastUpdated);
+    renderCards(collators, allRankings);
     renderAlert(collators);
   } catch (err) {
     setIndicator('error');
@@ -374,13 +527,13 @@ async function load() {
 function startCountdown() {
   clearInterval(countdownInterval);
   countdownSec = REFRESH_MS / 1000;
-  const fill = document.getElementById('refreshFill');
-  const countdownText = document.getElementById('countdownText');
-  countdownInterval = setInterval(() => {
+  var fill = document.getElementById('refreshFill');
+  var countdownText = document.getElementById('countdownText');
+  countdownInterval = setInterval(function() {
     countdownSec--;
     fill.style.width = Math.max(0, (countdownSec / (REFRESH_MS / 1000)) * 100) + '%';
-    const m = Math.floor(countdownSec / 60);
-    const s = countdownSec % 60;
+    var m = Math.floor(countdownSec / 60);
+    var s = countdownSec % 60;
     countdownText.textContent = m + ':' + (s < 10 ? '0' : '') + s;
     if (countdownSec <= 0) { clearInterval(countdownInterval); load().then(startCountdown); }
   }, 1000);

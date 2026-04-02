@@ -195,12 +195,19 @@ function getNeighbors(ranking, myAddress, count, tokenPrice) {
   const myIndex = ranking.findIndex(r => r.address === addr);
 
   if (myIndex === -1) {
+    const lastInSet = ranking[ranking.length - 1];
     return {
       rank: null,
       totalSelected: ranking.length,
       myStake: null,
       myStakeFormatted: null,
       neighbors: null,
+      threshold: lastInSet ? {
+        rank: lastInSet.rank,
+        address: lastInSet.address,
+        name: shortAddr(lastInSet.address),
+        stakeFormatted: lastInSet.stakeFormatted,
+      } : null,
     };
   }
 
@@ -244,7 +251,29 @@ function getNeighbors(ranking, myAddress, count, tokenPrice) {
     myStake: me.stakeFormatted,
     myStakeNum,
     neighbors,
+    threshold: buildThreshold(ranking, myStakeNum, tokenPrice),
   };
+}
+
+function buildThreshold(ranking, myStakeNum, tokenPrice) {
+  const last = ranking[ranking.length - 1];
+  if (!last) return null;
+  const lastStakeNum = Number(ethers.formatEther(BigInt(last.stake)));
+  const marginNum = myStakeNum - lastStakeNum;
+  const absMarginNum = Math.abs(marginNum);
+  const sign = marginNum >= 0 ? '+' : '-';
+  const t = {
+    rank: last.rank,
+    address: last.address,
+    name: shortAddr(last.address),
+    stakeFormatted: last.stakeFormatted,
+    margin: sign + formatCompact(absMarginNum),
+    marginPercent: (marginNum >= 0 ? '+' : '') + ((marginNum / myStakeNum) * 100).toFixed(1) + '%',
+  };
+  if (tokenPrice) {
+    t.marginUsd = sign + formatUsd(absMarginNum * tokenPrice);
+  }
+  return t;
 }
 
 async function main() {
@@ -271,6 +300,18 @@ async function main() {
   const rankings = {};
   for (const net of networks) {
     rankings[net] = await fetchRanking(net);
+  }
+
+  next.rankings = {};
+  for (const net of networks) {
+    if (rankings[net]) {
+      next.rankings[net] = rankings[net].map(r => ({
+        rank: r.rank,
+        address: r.address,
+        stakeFormatted: r.stakeFormatted,
+        stakeEther: Math.round(Number(ethers.formatEther(BigInt(r.stake))) * 10000) / 10000,
+      }));
+    }
   }
 
   for (const col of collators) {
