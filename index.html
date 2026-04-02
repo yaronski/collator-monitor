@@ -62,7 +62,6 @@ body {
 .indicator { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
 .indicator.live  { background: var(--green); box-shadow: 0 0 6px var(--green); animation: blink 2s ease-in-out infinite; }
 .indicator.error { background: var(--red); }
-.indicator.stale { background: var(--amber); }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .topbar-right { font-family: var(--mono); font-size: 11px; color: var(--text3); text-align: right; line-height: 1.4; }
 .page { max-width: 860px; margin: 0 auto; padding: 32px 24px 64px; }
@@ -75,7 +74,6 @@ body {
 .stat { flex: 1; padding: 14px 18px; background: var(--bg2); }
 .stat.ok   { background: rgba(74, 222, 128, 0.03); }
 .stat.bad  { background: rgba(248, 113, 113, 0.04); }
-.stat.warn { background: rgba(251, 191, 36, 0.03); }
 .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
 .stat-value { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--text); }
 
@@ -95,14 +93,19 @@ body {
   border-left: 4px solid var(--orange);
   background: linear-gradient(135deg, rgba(251,146,60,0.1) 0%, var(--bg3) 40%);
 }
-.card.status-inactive   { border-color: var(--red-d); background: #1a1212; }
-.card.status-warning    { border-color: rgba(251,191,36,0.3); background: #151208; }
-.card.status-error      { border-color: rgba(251,191,36,0.25); }
+.card.status-inactive { border-color: var(--red-d); background: #1a1212; }
+.card.status-error    { border-color: rgba(251,191,36,0.25); }
 
 .card-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .card-label { font-size: 14px; font-weight: 500; color: var(--text); }
 .card-addr { font-family: var(--mono); font-size: 11px; color: var(--text3); word-break: break-all; flex: 1; min-width: 0; }
 .card-addr a { color: var(--text3); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: #444; }
+
+.card-rank {
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  flex-shrink: 0; letter-spacing: 0.02em;
+}
+.card-rank .rank-num { font-size: 13px; font-weight: 600; color: var(--text2); }
 
 .status-badge {
   font-family: var(--mono); font-size: 10px; font-weight: 500;
@@ -110,7 +113,6 @@ body {
 }
 .status-badge.active   { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-d); }
 .status-badge.inactive { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-d); }
-.status-badge.warning  { background: var(--amber-bg); color: var(--amber); border: 1px solid #78350f; }
 .status-badge.error    { background: var(--amber-bg); color: var(--amber); border: 1px solid #78350f; }
 
 .card-meta {
@@ -130,10 +132,6 @@ body {
 
 .ranking { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 
-.rank-header { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
-.rank-num { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--text); line-height: 1; }
-.rank-of   { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--text3); line-height: 1; }
-
 .ranking-table { width: 100%; font-family: var(--mono); font-size: 11px; border-collapse: collapse; table-layout: fixed; }
 .ranking-table th {
   font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em;
@@ -141,12 +139,17 @@ body {
 }
 .ranking-table th:nth-child(1) { width: 32px; text-align: left; }
 .ranking-table th:nth-child(2) { text-align: left; }
+.ranking-table th:nth-child(3),
+.ranking-table th:nth-child(4),
+.ranking-table th:nth-child(5),
+.ranking-table th:nth-child(6) { text-align: right; }
 .ranking-table td { padding: 3px 0; vertical-align: middle; white-space: nowrap; }
 .ranking-table td:nth-child(1) { color: var(--text3); text-align: left; }
 .ranking-table td:nth-child(2) { text-align: left; overflow: hidden; text-overflow: ellipsis; }
 .ranking-table td:nth-child(3),
 .ranking-table td:nth-child(4),
-.ranking-table td:nth-child(5) { text-align: right; }
+.ranking-table td:nth-child(5),
+.ranking-table td:nth-child(6) { text-align: right; }
 .ranking-table td:nth-child(4) { color: var(--text2); }
 .ranking-table tr.self td { color: var(--text); font-weight: 500; background: rgba(255,255,255,0.03); }
 .ranking-table .gap-ahead  { color: var(--green); }
@@ -159,9 +162,28 @@ body {
 .empty { text-align: center; padding: 60px 0; color: var(--text3); font-size: 13px; line-height: 1.8; }
 
 .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); font-family: var(--mono); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+.footer a { color: inherit; text-decoration: underline; text-decoration-color: #444; }
 
-.refresh-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-bottom: 24px; }
+.refresh-wrap { margin-bottom: 24px; }
+.refresh-label { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+.refresh-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
 .refresh-bar-fill { height: 100%; background: var(--text3); transition: width 1s linear; }
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; height: 48px; }
+  .page { padding: 20px 14px 48px; }
+  .card { padding: 14px 16px; }
+  .card-row { gap: 8px; }
+  .card-addr { font-size: 10px; }
+  .card-meta { gap: 14px; }
+  .meta-val { font-size: 12px; }
+  .ranking-table { font-size: 10px; }
+  .ranking-table td, .ranking-table th { white-space: normal; word-break: break-word; }
+  .stats { flex-direction: column; }
+  .stat { padding: 10px 14px; }
+  .stat-value { font-size: 18px; }
+  .footer { flex-direction: column; gap: 4px; }
+}
 </style>
 </head>
 <body>
@@ -175,21 +197,24 @@ body {
 </div>
 
 <div class="page">
-  <div class="refresh-bar"><div class="refresh-bar-fill" id="refreshFill" style="width:100%"></div></div>
+  <div class="refresh-wrap">
+    <div class="refresh-label">Auto-refresh <span id="countdownText">5:00</span></div>
+    <div class="refresh-bar"><div class="refresh-bar-fill" id="refreshFill" style="width:100%"></div></div>
+  </div>
   <div class="alert-banner" id="alertBanner"></div>
 
   <div class="stats" id="statsRow">
     <div class="stat ok" id="statActiveBox"><div class="stat-label">Active</div><div class="stat-value" id="statActive">\u2013</div></div>
     <div class="stat" id="statInactiveBox"><div class="stat-label">Not in set</div><div class="stat-value" id="statInactive">\u2013</div></div>
-    <div class="stat" id="statWarnBox"><div class="stat-label">Warnings</div><div class="stat-value" id="statWarn">\u2013</div></div>
+    <div class="stat" id="statErrorBox"><div class="stat-label">Errors</div><div class="stat-value" id="statError">\u2013</div></div>
   </div>
 
   <div class="section-label">Collators</div>
   <div class="cards" id="cardList"><div class="empty">Loading status\u2026</div></div>
 
   <div class="footer">
-    <span>Precompile <a href="https://moonbeam.moonscan.io/address/0x0000000000000000000000000000000000000800" target="_blank" style="color:inherit;text-decoration:underline">0x\u2026800</a> \u00B7 isSelectedCandidate + awardedPoints</span>
-    <span>Updated by GitHub Actions every hour</span>
+    <span>Precompile <a href="https://moonbeam.moonscan.io/address/0x0000000000000000000000000000000000000800" target="_blank">0x\u2026800</a> \u00B7 isSelectedCandidate + awardedPoints</span>
+    <span><a href="https://github.com/yaronski/collator-monitor" target="_blank">Source on GitHub</a> \u00B7 Updated by GitHub Actions every hour</span>
   </div>
 </div>
 
@@ -209,22 +234,22 @@ function ago(iso) {
   return Math.floor(d/3600) + 'h ago';
 }
 function statusLabel(s) {
-  return { active:'ACTIVE', inactive:'NOT IN SET', warning:'IN SET \u00B7 0 PTS', error:'ERROR' }[s] || s.toUpperCase();
+  return { active:'ACTIVE', inactive:'NOT IN SET', error:'ERROR' }[s] || s.toUpperCase();
 }
 
 function setIndicator(state) { document.getElementById('liveIndicator').className = 'indicator ' + state; }
 
 function renderStats(collators) {
   const v = Object.values(collators);
-  const ac = v.filter(c => c.statusText === 'active').length;
+  const ac = v.filter(c => c.isActive).length;
   const ic = v.filter(c => c.statusText === 'inactive').length;
-  const wc = v.filter(c => c.statusText === 'warning').length;
+  const ec = v.filter(c => c.statusText === 'error').length;
   document.getElementById('statActive').textContent = ac;
   document.getElementById('statInactive').textContent = ic;
-  document.getElementById('statWarn').textContent = wc;
+  document.getElementById('statError').textContent = ec;
   document.getElementById('statActiveBox').className = 'stat' + (ac > 0 ? ' ok' : '');
   document.getElementById('statInactiveBox').className = 'stat' + (ic > 0 ? ' bad' : '');
-  document.getElementById('statWarnBox').className = 'stat' + (wc > 0 ? ' warn' : '');
+  document.getElementById('statErrorBox').className = 'stat' + (ec > 0 ? ' bad' : '');
 }
 
 function renderRanking(col) {
@@ -265,10 +290,6 @@ function renderRanking(col) {
     + (hasUsd ? '<th>USD</th>' : '');
 
   return '<div class="ranking">'
-    + '<div class="rank-header">'
-    + '<span class="rank-num">#' + r.rank + '</span>'
-    + '<span class="rank-of">of ' + r.totalSelected + '</span>'
-    + '</div>'
     + '<table class="ranking-table"><tr>' + thCols + '</tr>' + rows + '</table>'
     + '</div>';
 }
@@ -280,7 +301,7 @@ function renderCards(collators, lastChecked) {
     list.innerHTML = '<div class="empty">No collators in status.json yet.<br>Add an address to config.json and run the GitHub Actions workflow.</div>';
     return;
   }
-  const statusOrder = { inactive:0, error:1, warning:2, active:3 };
+  const statusOrder = { inactive:0, error:1, active:3 };
   const networkOrder = { moonbeam:0, moonriver:1 };
   entries.sort((a,b) => {
     const n = (networkOrder[a.network]??9) - (networkOrder[b.network]??9);
@@ -297,10 +318,15 @@ function renderCards(collators, lastChecked) {
     const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
     const networkLabel = col.network === 'moonbeam' ? 'Moonbeam' : 'Moonriver';
 
+    const rankHtml = (col.ranking && col.ranking.rank)
+      ? '<span class="card-rank"><span class="rank-num">#' + col.ranking.rank + '</span> of ' + col.ranking.totalSelected + '</span>'
+      : '';
+
     return '<div class="card status-' + st + ' network-' + col.network + '">'
       + '<div class="card-row">'
       + '<div class="card-label">' + label + '</div>'
       + '<div class="card-addr"><a href="' + subscanBase + col.address + '" target="_blank">' + col.address + '</a></div>'
+      + rankHtml
       + '<span class="status-badge ' + st + '">' + statusLabel(st) + '</span>'
       + '</div>'
       + '<div class="card-meta">'
@@ -331,8 +357,8 @@ async function load() {
     const data = await res.json();
     const collators = data.collators || {};
     const hasIssue = Object.values(collators).some(c => c.statusText === 'inactive');
-    const hasWarn = Object.values(collators).some(c => c.statusText === 'warning');
-    setIndicator(hasIssue ? 'error' : hasWarn ? 'stale' : 'live');
+    const hasError = Object.values(collators).some(c => c.statusText === 'error');
+    setIndicator(hasIssue ? 'error' : hasError ? 'stale' : 'live');
     document.getElementById('topbarMeta').innerHTML =
       'Updated ' + ago(data.lastUpdated) + '<br>' + fmt(data.lastUpdated);
     renderStats(collators);
@@ -349,9 +375,13 @@ function startCountdown() {
   clearInterval(countdownInterval);
   countdownSec = REFRESH_MS / 1000;
   const fill = document.getElementById('refreshFill');
+  const countdownText = document.getElementById('countdownText');
   countdownInterval = setInterval(() => {
     countdownSec--;
     fill.style.width = Math.max(0, (countdownSec / (REFRESH_MS / 1000)) * 100) + '%';
+    const m = Math.floor(countdownSec / 60);
+    const s = countdownSec % 60;
+    countdownText.textContent = m + ':' + (s < 10 ? '0' : '') + s;
     if (countdownSec <= 0) { clearInterval(countdownInterval); load().then(startCountdown); }
   }, 1000);
 }
