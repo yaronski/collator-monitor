@@ -177,15 +177,17 @@ body {
 .ranking-table .margin-danger { color: var(--red); }
 .ranking-table .addr-link { color: var(--text2); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: #444; }
 
-.threshold-section { margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.12); }
-.threshold-header {
+.ranking-table tr.threshold-row td { padding: 0; }
+.ranking-table .threshold-header {
   display: flex; align-items: center; gap: 8px;
-  margin-bottom: 4px; font-family: var(--mono); font-size: 9px;
+  padding: 8px 0 4px; font-family: var(--mono); font-size: 9px;
   color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em;
 }
-.threshold-header::before, .threshold-header::after {
+.ranking-table .threshold-header::before, .ranking-table .threshold-header::after {
   content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06);
 }
+.ranking-table tr.cutoff-row { border-top: 1px dashed rgba(255,255,255,0.12); }
+.ranking-table tr.cutoff-row td { padding-top: 5px; }
 
 .fullset-btn {
   display: block; width: 100%; margin-top: 8px;
@@ -354,7 +356,10 @@ function renderRanking(col, fullRanking) {
     html += sparklineHtml(r.rank, r.totalSelected);
   }
 
+  let hasTable = false;
+
   if (r.neighbors && r.neighbors.length) {
+    hasTable = true;
     const hasUsd = r.neighbors.some(n => n.gapUsd);
     const rows = r.neighbors.map(n => {
       const name = n.name || (n.address.slice(0, 6) + '\u2026' + n.address.slice(-4));
@@ -378,7 +383,7 @@ function renderRanking(col, fullRanking) {
 
     const thCols = '<th>#</th><th style="text-align:left">Collator</th><th>Stake</th><th>Gap</th><th>%</th>'
       + (hasUsd ? '<th>USD</th>' : '');
-    html += '<table class="ranking-table"><tr>' + thCols + '</tr>' + rows + '</table>';
+    html += '<table class="ranking-table"><tr>' + thCols + '</tr>' + rows;
   }
 
   if (r.threshold) {
@@ -386,9 +391,16 @@ function renderRanking(col, fullRanking) {
     const tName = t.name || (t.address.slice(0, 6) + '\u2026' + t.address.slice(-4));
     const marginClass = t.margin && !t.margin.startsWith('-') ? 'margin-safe' : 'margin-danger';
 
-    html += '<div class="threshold-section">';
+    if (!hasTable) {
+      html += '<table class="ranking-table">';
+      hasTable = true;
+    }
+
+    html += '<tr class="threshold-row"><td colspan="6" style="padding:0">';
     html += '<div class="threshold-header">Cutoff (#' + t.rank + ')</div>';
-    html += '<table class="ranking-table"><tr>';
+    html += '</td></tr>';
+
+    html += '<tr class="cutoff-row">';
     html += '<td>#' + t.rank + '</td>';
     html += '<td><a href="' + subscanBase + t.address + '" target="_blank" class="addr-link">' + tName + '</a></td>';
     html += '<td style="text-align:right">' + t.stakeFormatted + ' ' + token + '</td>';
@@ -399,7 +411,11 @@ function renderRanking(col, fullRanking) {
     } else {
       html += '<td colspan="3" style="color:var(--text3);text-align:center;font-size:9px">\u2190 minimum to enter set</td>';
     }
-    html += '</tr></table></div>';
+    html += '</tr>';
+  }
+
+  if (hasTable) {
+    html += '</table>';
   }
 
   if (fullRanking && fullRanking.length > 0) {
