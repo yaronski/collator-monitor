@@ -428,7 +428,7 @@ function renderRanking(col, fullRanking) {
     const total = r.totalSelected || fullRanking.length;
     const selfAddr = col.address.toLowerCase();
     const fsRows = fullRanking.map(entry => {
-      const eName = entry.address.slice(0, 6) + '\u2026' + entry.address.slice(-4);
+      const eName = entry.name || (entry.address.slice(0, 6) + '\u2026' + entry.address.slice(-4));
       const isSelf = entry.address === selfAddr;
       const isCutoff = entry.rank === total;
       const barPct = Math.max(1, Math.round((entry.stakeEther / maxStake) * 100));

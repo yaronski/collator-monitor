@@ -94,6 +94,32 @@ function withTimeout(promise, ms) {
   });
 }
 
+async function fetchCollatorNames(network, addresses) {
+  const base = network === 'moonbeam'
+    ? 'https://moonbeam.moonscan.io/address/'
+    : 'https://moonriver.moonscan.io/address/';
+
+  const names = {};
+  for (const addr of addresses) {
+    try {
+      const res = await fetch(base + addr, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)' },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
+      if (match && match[1].trim()) {
+        names[addr] = match[1].trim();
+      }
+    } catch (_) {}
+    await new Promise(r => setTimeout(r, 150));
+  }
+  const count = Object.keys(names).length;
+  console.log(`  ✓ Moonscan names: ${count}/${addresses.length} for ${network}`);
+  return names;
+}
+
 async function fetchPrices() {
   try {
     const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=moonbeam,moonriver&vs_currencies=usd');
@@ -188,7 +214,7 @@ async function fetchRanking(network) {
   return null;
 }
 
-function getNeighbors(ranking, myAddress, count, tokenPrice) {
+function getNeighbors(ranking, myAddress, count, tokenPrice, names) {
   if (!ranking || !ranking.length) return null;
 
   const addr = myAddress.toLowerCase();
@@ -225,7 +251,7 @@ function getNeighbors(ranking, myAddress, count, tokenPrice) {
     const rStakeNum = Number(ethers.formatEther(BigInt(r.stake)));
     const pctDiff = rStakeNum > 0 ? ((rStakeNum - myStakeNum) / myStakeNum) * 100 : 0;
 
-    const name = shortAddr(r.address);
+    const name = names[r.address] || shortAddr(r.address);
 
     const result = {
       rank: r.rank,
@@ -251,11 +277,11 @@ function getNeighbors(ranking, myAddress, count, tokenPrice) {
     myStake: me.stakeFormatted,
     myStakeNum,
     neighbors,
-    threshold: buildThreshold(ranking, myStakeNum, tokenPrice),
+    threshold: buildThreshold(ranking, myStakeNum, tokenPrice, names),
   };
 }
 
-function buildThreshold(ranking, myStakeNum, tokenPrice) {
+function buildThreshold(ranking, myStakeNum, tokenPrice, names) {
   const last = ranking[ranking.length - 1];
   if (!last) return null;
   const lastStakeNum = Number(ethers.formatEther(BigInt(last.stake)));
@@ -265,7 +291,7 @@ function buildThreshold(ranking, myStakeNum, tokenPrice) {
   const t = {
     rank: last.rank,
     address: last.address,
-    name: shortAddr(last.address),
+    name: names[t.address] || shortAddr(t.address),
     stakeFormatted: last.stakeFormatted,
     margin: sign + formatCompact(absMarginNum),
     marginPercent: (marginNum >= 0 ? '+' : '') + ((marginNum / myStakeNum) * 100).toFixed(1) + '%',
@@ -298,8 +324,21 @@ async function main() {
   if (prices) next.prices = prices;
 
   const rankings = {};
+  const allRankingAddrs = {};
   for (const net of networks) {
     rankings[net] = await fetchRanking(net);
+    if (rankings[net]) {
+      allRankingAddrs[net] = rankings[net].map(r => r.address);
+    }
+  }
+
+  console.log('\nFetching collator names from Moonscan…');
+  const allNames = {};
+  for (const net of networks) {
+    const addrs = allRankingAddrs[net] || [];
+    if (addrs.length) {
+      allNames[net] = await fetchCollatorNames(net, addrs);
+    }
   }
 
   next.rankings = {};
@@ -308,6 +347,7 @@ async function main() {
       next.rankings[net] = rankings[net].map(r => ({
         rank: r.rank,
         address: r.address,
+        name: allNames[net]?.[r.address] || null,
         stakeFormatted: r.stakeFormatted,
         stakeEther: Math.round(Number(ethers.formatEther(BigInt(r.stake))) * 10000) / 10000,
       }));
@@ -323,7 +363,8 @@ async function main() {
     const addr = col.address.toLowerCase();
     const key = `${col.network}:${shortAddr(addr)}`;
     const p = prev.collators?.[key] ?? {};
-    const label = col.label || shortAddr(addr);
+    const onChainName = allNames[col.network]?.[addr];
+    const label = onChainName || col.label || shortAddr(addr);
 
     console.log(`\nChecking ${label} (${col.network})…`);
 
@@ -340,7 +381,7 @@ async function main() {
         statusText: 'error',
         lastError: err.message,
         lastChecked: now,
-        ranking: getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network]),
+        ranking: getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network], allNames[col.network] || {}),
       };
       continue;
     }
@@ -378,7 +419,7 @@ async function main() {
     console.log(`  Round: ${currentRound} | Active: ${isActive} | Points this round: ${pointsStr}`);
     if (!isActive) console.log(`  Consecutive inactive checks: ${consecutiveInactive}/${threshold}`);
 
-    const ranking = getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network]);
+    const ranking = getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network], allNames[col.network] || {});
     if (ranking?.rank) {
       console.log(`  Rank: ${ranking.rank}/${ranking.totalSelected} | Stake: ${ranking.myStake}`);
     }
