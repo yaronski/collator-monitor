@@ -364,8 +364,8 @@ async function main() {
     const addr = col.address.toLowerCase();
     const key = `${col.network}:${shortAddr(addr)}`;
     const p = prev.collators?.[key] ?? {};
-    const onChainName = allNames[col.network]?.[addr];
-    const label = onChainName || col.label || shortAddr(addr);
+    const moonscanName = allNames[col.network]?.[addr];
+    const label = col.label || moonscanName || shortAddr(addr);
 
     console.log(`\nChecking ${label} (${col.network})…`);
 
