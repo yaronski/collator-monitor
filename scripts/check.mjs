@@ -288,10 +288,11 @@ function buildThreshold(ranking, myStakeNum, tokenPrice, names) {
   const marginNum = myStakeNum - lastStakeNum;
   const absMarginNum = Math.abs(marginNum);
   const sign = marginNum >= 0 ? '+' : '-';
+  const lastName = names[last.address] || shortAddr(last.address);
   const t = {
     rank: last.rank,
     address: last.address,
-    name: names[t.address] || shortAddr(t.address),
+    name: lastName,
     stakeFormatted: last.stakeFormatted,
     margin: sign + formatCompact(absMarginNum),
     marginPercent: (marginNum >= 0 ? '+' : '') + ((marginNum / myStakeNum) * 100).toFixed(1) + '%',
