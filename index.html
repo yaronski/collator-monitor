@@ -82,20 +82,36 @@ body {
 .cards { display: flex; flex-direction: column; gap: 14px; }
 
 .card {
+  display: flex;
   background: var(--bg3); border: 1px solid rgba(255,255,255,0.12);
-  border-radius: var(--radius); padding: 18px 22px;
+  border-radius: var(--radius); overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
-.card.network-moonbeam {
-  border-left: 4px solid var(--purple);
-  background: linear-gradient(135deg, rgba(167,139,250,0.1) 0%, var(--bg3) 40%);
+.card-edge {
+  width: 28px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; padding: 14px 0;
+  user-select: none;
 }
-.card.network-moonriver {
-  border-left: 4px solid var(--orange);
-  background: linear-gradient(135deg, rgba(251,146,60,0.1) 0%, var(--bg3) 40%);
+.card-edge.moonbeam {
+  background: rgba(167,139,250,0.15); color: var(--purple);
 }
-.card.status-inactive { border-color: var(--red-d); background: #1a1212; }
+.card-edge.moonriver {
+  background: rgba(251,146,60,0.15); color: var(--orange);
+}
+.card-body {
+  flex: 1; min-width: 0; padding: 18px 22px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.04) 0%, transparent 40%);
+}
+.card.network-moonriver .card-body {
+  background: linear-gradient(135deg, rgba(251,146,60,0.04) 0%, transparent 40%);
+}
+.card.status-inactive { border-color: var(--red-d); }
+.card.status-inactive .card-body { background: #1a1212; }
 .card.status-error    { border-color: rgba(251,191,36,0.25); }
+.card.status-error .card-body { background: none; }
 
 .card-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .card-label { font-size: 16px; font-weight: 600; color: var(--text); }
@@ -125,9 +141,6 @@ body {
 .meta-val { font-family: var(--mono); font-size: 13px; color: var(--text); }
 .meta-val.highlight { color: var(--red); }
 .meta-val.muted     { color: var(--text3); }
-.net-label { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.05em; }
-.net-label.moonbeam  { color: var(--purple); }
-.net-label.moonriver { color: var(--orange); }
 
 .card-error { margin-top: 8px; font-size: 12px; color: var(--amber); font-family: var(--mono); }
 
@@ -237,7 +250,8 @@ body {
 @media (max-width: 640px) {
   .topbar { padding: 0 16px; height: 48px; }
   .page { padding: 20px 14px 48px; }
-  .card { padding: 14px 16px; }
+  .card-body { padding: 14px 16px; }
+  .card-edge { width: 22px; font-size: 9px; padding: 10px 0; }
   .card-row { gap: 8px; }
   .card-addr { font-size: 10px; }
   .card-meta { gap: 14px; }
@@ -499,6 +513,8 @@ function renderCards(collators, allRankings) {
     var fullRanking = allRankings[col.network] || null;
 
     return '<div class="card status-' + st + ' network-' + col.network + '">'
+      + '<div class="card-edge ' + col.network + '">' + networkLabel.toUpperCase() + '</div>'
+      + '<div class="card-body">'
       + '<div class="card-row">'
       + '<div class="card-label">' + label + '</div>'
       + '<div class="card-addr"><a href="' + subscanBase + col.address + '" target="_blank">' + col.address + '</a></div>'
@@ -506,13 +522,13 @@ function renderCards(collators, allRankings) {
       + '<span class="status-badge ' + st + '">' + statusLabel(st) + '</span>'
       + '</div>'
       + '<div class="card-meta">'
-      + '<div class="meta-item"><div class="meta-key">Network</div><div class="meta-val net-label ' + col.network + '">' + networkLabel + '</div></div>'
       + '<div class="meta-item"><div class="meta-key">Round</div><div class="meta-val ' + (!col.isActive ? 'highlight' : '') + '">' + (col.currentRound || '\u2013') + '</div></div>'
       + '<div class="meta-item"><div class="meta-key">Points this round</div><div class="meta-val">' + pts + '</div></div>'
       + consec
       + '</div>'
       + renderRanking(col, fullRanking, ownAddrs)
       + (col.lastError ? '<div class="card-error">\u2717 ' + col.lastError + '</div>' : '')
+      + '</div>'
       + '</div>';
   }).join('');
 }
