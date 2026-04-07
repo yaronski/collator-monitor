@@ -33,6 +33,10 @@
   --amber-bg:#1c1200;
   --purple:  #a78bfa;
   --orange:  #fb923c;
+  --purple-v: #8b5cf6;
+  --purple-d: #6d28d9;
+  --orange-v: #f97316;
+  --orange-d: #ea580c;
   --radius:  8px;
 }
 
@@ -88,28 +92,53 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 .card-edge {
-  width: 28px; flex-shrink: 0;
+  width: 36px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   writing-mode: vertical-rl; transform: rotate(180deg);
-  font-family: var(--mono); font-size: 11px; font-weight: 700;
-  letter-spacing: 0.14em; padding: 14px 0;
+  font-family: var(--mono); font-size: 42px; font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 0;
   user-select: none;
+  text-transform: lowercase;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 .card-edge.moonbeam {
-  background: rgba(167,139,250,0.15); color: var(--purple);
+  background-image: linear-gradient(180deg, #c4b5fd 0%, var(--purple-v) 40%, var(--purple-d) 100%);
+  background-color: transparent;
 }
 .card-edge.moonriver {
-  background: rgba(251,146,60,0.15); color: var(--orange);
+  background-image: linear-gradient(180deg, #fdba74 0%, var(--orange-v) 40%, var(--orange-d) 100%);
+  background-color: transparent;
+}
+.card-edge-bg {
+  position: absolute; top: 0; left: 0; width: 36px; height: 100%;
+}
+.card-edge-bg.moonbeam {
+  background: linear-gradient(180deg, rgba(139,92,246,0.18) 0%, rgba(109,40,217,0.10) 100%);
+}
+.card-edge-bg.moonriver {
+  background: linear-gradient(180deg, rgba(249,115,22,0.18) 0%, rgba(234,88,12,0.10) 100%);
+}
+.card-edge-wrap {
+  position: relative; width: 36px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
 }
 .card-body {
   flex: 1; min-width: 0; padding: 18px 22px;
-  background: linear-gradient(135deg, rgba(167,139,250,0.04) 0%, transparent 40%);
+}
+.card.network-moonbeam .card-body {
+  background: linear-gradient(135deg, rgba(139,92,246,0.07) 0%, transparent 50%);
 }
 .card.network-moonriver .card-body {
-  background: linear-gradient(135deg, rgba(251,146,60,0.04) 0%, transparent 40%);
+  background: linear-gradient(135deg, rgba(249,115,22,0.07) 0%, transparent 50%);
 }
 .card.status-inactive { border-color: var(--red-d); }
 .card.status-inactive .card-body { background: #1a1212; }
+.card.status-inactive .card-edge-bg { background: linear-gradient(180deg, rgba(139,92,246,0.08) 0%, rgba(109,40,217,0.04) 100%); }
+.card.status-inactive.network-moonriver .card-edge-bg { background: linear-gradient(180deg, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.04) 100%); }
 .card.status-error    { border-color: rgba(251,191,36,0.25); }
 .card.status-error .card-body { background: none; }
 
@@ -152,7 +181,7 @@ body {
 .position-map .seg.self { background: var(--green); box-shadow: 0 0 5px rgba(74,222,128,0.5); }
 .position-map .seg.cutoff { background: var(--amber); opacity: 0.6; }
 .position-map-label { position: absolute; top: 0; transform: translateX(-50%); font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 600; white-space: nowrap; }
-.position-map-ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 2px; }
+.position-map .end-label { color: var(--text3); font-weight: 400; }
 
 .ranking-table { width: 100%; font-family: var(--mono); font-size: 11px; border-collapse: collapse; table-layout: fixed; }
 .ranking-table th {
@@ -252,7 +281,8 @@ body {
   .topbar { padding: 0 16px; height: 48px; }
   .page { padding: 20px 14px 48px; }
   .card-body { padding: 14px 16px; }
-  .card-edge { width: 22px; font-size: 9px; padding: 10px 0; }
+  .card-edge-wrap, .card-edge-bg { width: 24px; }
+  .card-edge { font-size: 28px; }
   .card-row { gap: 8px; }
   .card-addr { font-size: 10px; }
   .card-meta { gap: 14px; }
@@ -356,9 +386,10 @@ function positionMapHtml(rank, total) {
   }
   var pct = ((rank - 1) / (total - 1)) * 100;
   return '<div class="position-map">'
+    + '<div class="position-map-label end-label" style="left:0">#1</div>'
+    + '<div class="position-map-label end-label" style="left:100%">#' + total + '</div>'
     + '<div class="position-map-label" style="left:' + pct.toFixed(1) + '%">#' + rank + '</div>'
     + '<div class="position-map-track">' + segs + '</div>'
-    + '<div class="position-map-ends"><span>#1</span><span>#' + total + '</span></div>'
     + '</div>';
 }
 
@@ -515,7 +546,7 @@ function renderCards(collators, allRankings) {
     var fullRanking = allRankings[col.network] || null;
 
     return '<div class="card status-' + st + ' network-' + col.network + '">'
-      + '<div class="card-edge ' + col.network + '">' + networkLabel.toUpperCase() + '</div>'
+      + '<div class="card-edge-wrap"><div class="card-edge-bg ' + col.network + '"></div><div class="card-edge ' + col.network + '">' + networkLabel.toLowerCase() + '</div></div>'
       + '<div class="card-body">'
       + '<div class="card-row">'
       + '<div class="card-label">' + label + '</div>'
