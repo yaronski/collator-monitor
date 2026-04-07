@@ -356,16 +356,18 @@ function statusLabel(s) {
 function setIndicator(state) { document.getElementById('liveIndicator').className = 'indicator ' + state; }
 
 function trendHtml(history) {
-  if (!history || history.length < 2) return '';
+  if (!history || history.length < 24) return '';
   var last = history[history.length - 1];
   if (!last.rank) return '';
-  var lookback = Math.min(history.length - 1, 24);
+  var lookback = Math.min(history.length - 1, 168);
   var prev = history[history.length - 1 - lookback];
   if (!prev.rank) return '';
   var diff = prev.rank - last.rank;
-  if (diff > 0) return { cls: 'trend-up', text: '\u2191' + diff + ' in ' + lookback + 'h' };
-  if (diff < 0) return { cls: 'trend-down', text: '\u2193' + (-diff) + ' in ' + lookback + 'h' };
-  return { cls: 'trend-same', text: '\u2192 steady (' + lookback + 'h)' };
+  var days = Math.round(lookback / 24);
+  var span = days >= 1 ? days + 'd' : lookback + 'h';
+  if (diff > 0) return { cls: 'trend-up', text: '\u2191' + diff + ' in ' + span };
+  if (diff < 0) return { cls: 'trend-down', text: '\u2193' + (-diff) + ' in ' + span };
+  return { cls: 'trend-same', text: '\u2192 steady (' + span + ')' };
 }
 
 function renderStats(collators) {
@@ -543,7 +545,12 @@ function renderCards(collators, allRankings) {
   var networkOrder = { moonbeam:0, moonriver:1 };
   entries.sort(function(a,b) {
     var n = (networkOrder[a.network]||9) - (networkOrder[b.network]||9);
-    return n !== 0 ? n : (statusOrder[a.statusText]||9) - (statusOrder[b.statusText]||9);
+    if (n !== 0) return n;
+    var s = (statusOrder[a.statusText]||9) - (statusOrder[b.statusText]||9);
+    if (s !== 0) return s;
+    var ra = a.ranking?.rank || 9999;
+    var rb = b.ranking?.rank || 9999;
+    return ra - rb;
   });
 
   var ownAddrs = {};
@@ -562,7 +569,7 @@ function renderCards(collators, allRankings) {
       ? '<span class="card-rank"><span class="rank-num">#' + col.ranking.rank + '</span> of ' + col.ranking.totalSelected + '</span>'
       : '';
     var trend = trendHtml(col.history);
-    var trendMeta = trend ? '<div class="meta-item"><div class="meta-key">Rank trend (' + Math.min((col.history ? col.history.length - 1 : 0), 24) + 'h)</div><div class="meta-val ' + trend.cls + '">' + trend.text + '</div></div>' : '';
+    var trendMeta = trend ? '<div class="meta-item"><div class="meta-key">Rank trend</div><div class="meta-val ' + trend.cls + '">' + trend.text + '</div></div>' : '';
     var fullRanking = allRankings[col.network] || null;
 
     return '<div class="card status-' + st + ' network-' + col.network + '">'
