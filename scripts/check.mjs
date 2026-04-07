@@ -101,13 +101,13 @@ async function fetchCollatorNames(network, addresses) {
 
   const names = {};
   for (const addr of addresses) {
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 2; attempt++) {
       try {
         const res = await fetch(base + addr, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)' },
+          headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36' },
           signal: AbortSignal.timeout(10000),
         });
-        if (!res.ok) { await new Promise(r => setTimeout(r, 300)); continue; }
+        if (!res.ok) { await new Promise(r => setTimeout(r, 500)); continue; }
         const html = await res.text();
         const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
         if (match && match[1].trim()) {
@@ -115,7 +115,7 @@ async function fetchCollatorNames(network, addresses) {
         }
         break;
       } catch (_) {
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 500));
       }
     }
     await new Promise(r => setTimeout(r, 150));
@@ -123,6 +123,30 @@ async function fetchCollatorNames(network, addresses) {
   const count = Object.keys(names).length;
   console.log(`  ✓ Moonscan names: ${count}/${addresses.length} for ${network}`);
   return names;
+}
+
+async function fetchSingleName(network, addr) {
+  const base = network === 'moonbeam'
+    ? 'https://moonbeam.moonscan.io/address/'
+    : 'https://moonriver.moonscan.io/address/';
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(base + addr, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36' },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!res.ok) { await new Promise(r => setTimeout(r, 2000)); continue; }
+      const html = await res.text();
+      const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
+      if (match && match[1].trim()) {
+        return match[1].trim();
+      }
+      return null;
+    } catch (_) {
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+  return null;
 }
 
 async function fetchPrices() {
@@ -368,6 +392,23 @@ async function main() {
       if (!allNames[net]) allNames[net] = {};
       if (!allNames[net][addr] && prevNames[net][addr]) {
         allNames[net][addr] = prevNames[net][addr];
+      }
+    }
+  }
+
+  console.log('\nFetching missing names for configured collators…');
+  for (const col of collators) {
+    if (!col.address || col.address === '0xYOUR_COLLATOR_ADDRESS_HERE') continue;
+    const addr = col.address.toLowerCase();
+    if (!allNames[col.network]) allNames[col.network] = {};
+    if (!allNames[col.network][addr]) {
+      const name = await fetchSingleName(col.network, addr);
+      if (name) {
+        allNames[col.network][addr] = name;
+        console.log(`  ✓ Got name for ${shortAddr(addr)}: ${name}`);
+      } else if (prevNames[col.network]?.[addr]) {
+        allNames[col.network][addr] = prevNames[col.network][addr];
+        console.log(`  → Using cached name for ${shortAddr(addr)}: ${prevNames[col.network][addr]}`);
       }
     }
   }
