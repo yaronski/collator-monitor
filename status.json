@@ -1,17 +1,17 @@
 {
-  "lastUpdated": "2026-04-07T18:43:05.032Z",
+  "lastUpdated": "2026-04-07T19:47:23.781Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
       "label": "crifferent",
       "isActive": true,
-      "points": 340,
+      "points": 480,
       "currentRound": 6036,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "statusText": "active",
-      "lastChecked": "2026-04-07T18:43:05.032Z",
+      "lastChecked": "2026-04-07T19:47:23.781Z",
       "lastError": null,
       "ranking": {
         "rank": 27,
@@ -47,7 +47,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$42.0k"
+            "stakeUsd": "$41.9k"
           },
           {
             "rank": 28,
@@ -64,10 +64,10 @@
             "address": "0xde7999b63df67a9ca6d8d5dabcccc041d871b59c",
             "name": "Paradoxx",
             "stakeFormatted": "3.96m",
-            "gap": "-48.09k",
+            "gap": "-47.97k",
             "gapPercent": "-1.2%",
             "isSelf": false,
-            "gapUsd": "-$503"
+            "gapUsd": "-$501"
           }
         ],
         "threshold": {
@@ -77,7 +77,7 @@
           "stakeFormatted": "1.08m",
           "margin": "+2.93m",
           "marginPercent": "+73.2%",
-          "marginUsd": "+$30.7k"
+          "marginUsd": "+$30.6k"
         }
       },
       "history": [
@@ -116,6 +116,10 @@
         {
           "ts": "2026-04-07T18:43:05.032Z",
           "rank": 27
+        },
+        {
+          "ts": "2026-04-07T19:47:23.781Z",
+          "rank": 27
         }
       ]
     },
@@ -124,12 +128,12 @@
       "network": "moonriver",
       "label": "Crifferent",
       "isActive": true,
-      "points": 60,
+      "points": 240,
       "currentRound": 20793,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "statusText": "active",
-      "lastChecked": "2026-04-07T18:43:05.032Z",
+      "lastChecked": "2026-04-07T19:47:23.781Z",
       "lastError": null,
       "ranking": {
         "rank": 58,
@@ -234,6 +238,10 @@
         {
           "ts": "2026-04-07T18:43:05.032Z",
           "rank": 58
+        },
+        {
+          "ts": "2026-04-07T19:47:23.781Z",
+          "rank": 58
         }
       ]
     },
@@ -242,12 +250,12 @@
       "network": "moonbeam",
       "label": "Hetavalidation",
       "isActive": true,
-      "points": 300,
+      "points": 480,
       "currentRound": 6036,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "statusText": "active",
-      "lastChecked": "2026-04-07T18:43:05.032Z",
+      "lastChecked": "2026-04-07T19:47:23.781Z",
       "lastError": null,
       "ranking": {
         "rank": 25,
@@ -283,7 +291,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$42.0k"
+            "stakeUsd": "$41.9k"
           },
           {
             "rank": 26,
@@ -352,6 +360,10 @@
         {
           "ts": "2026-04-07T18:43:05.032Z",
           "rank": 25
+        },
+        {
+          "ts": "2026-04-07T19:47:23.781Z",
+          "rank": 25
         }
       ]
     },
@@ -360,12 +372,12 @@
       "network": "moonriver",
       "label": "ExtraCoin",
       "isActive": true,
-      "points": 140,
+      "points": 200,
       "currentRound": 20793,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "statusText": "active",
-      "lastChecked": "2026-04-07T18:43:05.032Z",
+      "lastChecked": "2026-04-07T19:47:23.781Z",
       "lastError": null,
       "ranking": {
         "rank": 61,
@@ -470,12 +482,16 @@
         {
           "ts": "2026-04-07T18:43:05.032Z",
           "rank": 61
+        },
+        {
+          "ts": "2026-04-07T19:47:23.781Z",
+          "rank": 61
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.01046615,
+    "moonbeam": 0.01043755,
     "moonriver": 1.13
   },
   "rankings": {
@@ -498,8 +514,8 @@
         "rank": 3,
         "address": "0xb3e64ef8fc9df438c9a54f4b189eddc1807b55a5",
         "name": "Foundation 1",
-        "stakeFormatted": "4.72m",
-        "stakeEther": 4720476.1622
+        "stakeFormatted": "4.80m",
+        "stakeEther": 4800528.3922
       },
       {
         "rank": 4,
@@ -681,7 +697,7 @@
         "address": "0xde7999b63df67a9ca6d8d5dabcccc041d871b59c",
         "name": "Paradoxx",
         "stakeFormatted": "3.96m",
-        "stakeEther": 3962561.316
+        "stakeEther": 3962684.3316
       },
       {
         "rank": 30,
@@ -884,7 +900,7 @@
         "address": "0x65820bab4000f6a4db0ad0ea6b2a7817c2f5e801",
         "name": null,
         "stakeFormatted": "1.31m",
-        "stakeEther": 1313924.3235
+        "stakeEther": 1313981.8562
       },
       {
         "rank": 59,
