@@ -133,23 +133,12 @@ body {
 
 .ranking { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 
-.sparkline { margin: 0 0 10px; }
-.sparkline-track {
-  position: relative; height: 4px; background: var(--bg4);
-  border-radius: 2px;
-}
-.sparkline-dot {
-  position: absolute; top: -3px; width: 10px; height: 10px;
-  border-radius: 50%; transform: translateX(-50%);
-}
-.sparkline-dot.safe   { background: var(--green); box-shadow: 0 0 6px rgba(74,222,128,0.5); }
-.sparkline-dot.caution { background: var(--amber); box-shadow: 0 0 4px rgba(251,191,36,0.4); }
-.sparkline-dot.danger  { background: var(--red); box-shadow: 0 0 6px rgba(248,113,113,0.5); }
-.sparkline-labels {
-  display: flex; justify-content: space-between;
-  font-family: var(--mono); font-size: 9px; color: var(--text3);
-  margin-top: 3px;
-}
+.position-map { position: relative; margin: 0 0 10px; padding-top: 14px; }
+.position-map-track { display: flex; gap: 1px; }
+.position-map .seg { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 1px; min-width: 2px; }
+.position-map .seg.self { background: var(--green); box-shadow: 0 0 5px rgba(74,222,128,0.5); }
+.position-map .seg.cutoff { background: var(--amber); opacity: 0.6; }
+.position-map-label { position: absolute; top: 0; transform: translateX(-50%); font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 600; white-space: nowrap; }
 
 .ranking-table { width: 100%; font-family: var(--mono); font-size: 11px; border-collapse: collapse; table-layout: fixed; }
 .ranking-table th {
@@ -341,17 +330,23 @@ function renderStats(collators) {
   document.getElementById('statErrorBox').className = 'stat' + (ec > 0 ? ' bad' : '');
 }
 
-function sparklineHtml(rank, total) {
+function positionMapHtml(rank, total) {
   if (!rank || !total || total < 2) return '';
+  var segs = '';
+  for (var i = 1; i <= total; i++) {
+    var cls = 'seg';
+    if (i === rank) cls += ' self';
+    else if (i === total) cls += ' cutoff';
+    segs += '<span class="' + cls + '"></span>';
+  }
   var pct = ((rank - 1) / (total - 1)) * 100;
-  var dotClass = pct < 70 ? 'safe' : pct < 90 ? 'caution' : 'danger';
-  return '<div class="sparkline">'
-    + '<div class="sparkline-track"><div class="sparkline-dot ' + dotClass + '" style="left:' + pct.toFixed(1) + '%"></div></div>'
-    + '<div class="sparkline-labels"><span>#1</span><span>#' + total + '</span></div>'
+  return '<div class="position-map">'
+    + '<div class="position-map-label" style="left:' + pct.toFixed(1) + '%">#' + rank + '</div>'
+    + '<div class="position-map-track">' + segs + '</div>'
     + '</div>';
 }
 
-function renderRanking(col, fullRanking) {
+function renderRanking(col, fullRanking, ownAddrs) {
   var r = col.ranking;
   if (!r) return '';
   var subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
@@ -361,7 +356,7 @@ function renderRanking(col, fullRanking) {
   var html = '<div class="ranking">';
 
   if (r.rank && r.totalSelected) {
-    html += sparklineHtml(r.rank, r.totalSelected);
+    html += positionMapHtml(r.rank, r.totalSelected);
   }
 
   var hasTable = false;
@@ -435,15 +430,15 @@ function renderRanking(col, fullRanking) {
 
     var maxStake = fullRanking[0].stakeEther || 1;
     var total = r.totalSelected || fullRanking.length;
-    var selfAddr = col.address.toLowerCase();
     var fsRows = fullRanking.map(function(entry) {
       var eName = entry.name || (entry.address.slice(0, 6) + '\u2026' + entry.address.slice(-4));
-      var isSelf = entry.address === selfAddr;
+      var isOwn = ownAddrs && ownAddrs[entry.address];
       var isCutoff = entry.rank === total;
       var barPct = Math.max(1, Math.round((entry.stakeEther / maxStake) * 100));
-      return '<tr class="' + (isSelf ? 'self' : '') + (isCutoff ? ' cutoff' : '') + '">'
+      var displayName = isOwn ? (ownAddrs[entry.address] || eName) : eName;
+      return '<tr class="' + (isOwn ? 'self' : '') + (isCutoff ? ' cutoff' : '') + '">'
         + '<td>' + entry.rank + '</td>'
-        + '<td>' + (isSelf ? (col.label || eName) : '<a href="' + subscanBase + entry.address + '" target="_blank" class="addr-link">' + eName + '</a>') + '</td>'
+        + '<td>' + (isOwn ? displayName : '<a href="' + subscanBase + entry.address + '" target="_blank" class="addr-link">' + eName + '</a>') + '</td>'
         + '<td>' + entry.stakeFormatted + ' ' + token
         + ' <span class="stake-bar-wrap"><span class="stake-bar-fill" style="width:' + barPct + '%"></span></span>'
         + '</td></tr>';
@@ -486,6 +481,9 @@ function renderCards(collators, allRankings) {
     return n !== 0 ? n : (statusOrder[a.statusText]||9) - (statusOrder[b.statusText]||9);
   });
 
+  var ownAddrs = {};
+  entries.forEach(function(c) { ownAddrs[c.address] = c.label; });
+
   list.innerHTML = entries.map(function(col) {
     var st = col.statusText || 'error';
     var label = col.label || col.address;
@@ -513,7 +511,7 @@ function renderCards(collators, allRankings) {
       + '<div class="meta-item"><div class="meta-key">Points this round</div><div class="meta-val">' + pts + '</div></div>'
       + consec
       + '</div>'
-      + renderRanking(col, fullRanking)
+      + renderRanking(col, fullRanking, ownAddrs)
       + (col.lastError ? '<div class="card-error">\u2717 ' + col.lastError + '</div>' : '')
       + '</div>';
   }).join('');
