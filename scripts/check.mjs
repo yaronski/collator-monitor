@@ -306,6 +306,15 @@ function buildThreshold(ranking, myStakeNum, tokenPrice, names) {
   return t;
 }
 
+const MAX_HISTORY = 168;
+
+function appendHistory(prev, key, rank, timestamp) {
+  const existing = prev?.collators?.[key]?.history || [];
+  const entry = { ts: timestamp, rank };
+  const next = [...existing, entry];
+  return next.slice(-MAX_HISTORY);
+}
+
 async function main() {
   const envConfig = process.env.COLLATOR_CONFIG ? JSON.parse(process.env.COLLATOR_CONFIG) : null;
   const fileConfig = readJSON(join(ROOT, 'config.json'));
@@ -386,6 +395,7 @@ async function main() {
         lastError: err.message,
         lastChecked: now,
         ranking: getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network], allNames[col.network] || {}),
+        history: p.history || [],
       };
       continue;
     }
@@ -428,6 +438,8 @@ async function main() {
       console.log(`  Rank: ${ranking.rank}/${ranking.totalSelected} | Stake: ${ranking.myStake}`);
     }
 
+    const history = appendHistory(prev, key, ranking?.rank || null, now);
+
     next.collators[key] = {
       address: addr,
       network: col.network,
@@ -441,6 +453,7 @@ async function main() {
       lastChecked: now,
       lastError: null,
       ranking,
+      history,
     };
   }
 

@@ -297,6 +297,7 @@ body {
 <script>
 var REFRESH_MS = 60 * 60 * 1000;
 var countdownInterval;
+var expandedCards = {};
 
 function fmt(iso) {
   if (!iso) return '\u2013';
@@ -313,6 +314,19 @@ function statusLabel(s) {
   return { active:'ACTIVE', inactive:'NOT IN SET', error:'ERROR' }[s] || s.toUpperCase();
 }
 function setIndicator(state) { document.getElementById('liveIndicator').className = 'indicator ' + state; }
+
+function trendHtml(history) {
+  if (!history || history.length < 2) return '';
+  var last = history[history.length - 1];
+  if (!last.rank) return '';
+  var lookback = Math.min(history.length - 1, 24);
+  var prev = history[history.length - 1 - lookback];
+  if (!prev.rank) return '';
+  var diff = prev.rank - last.rank;
+  if (diff > 0) return '<span style="color:var(--green);margin-left:4px;font-size:13px" title="up ' + diff + ' spots in last ' + lookback + ' checks">\u2191' + diff + '</span>';
+  if (diff < 0) return '<span style="color:var(--red);margin-left:4px;font-size:13px" title="down ' + (-diff) + ' spots in last ' + lookback + ' checks">\u2193' + (-diff) + '</span>';
+  return '<span style="color:var(--text3);margin-left:4px;font-size:13px" title="no change in last ' + lookback + ' checks">\u2192</span>';
+}
 
 function renderStats(collators) {
   var v = Object.values(collators);
@@ -482,7 +496,7 @@ function renderCards(collators, allRankings) {
     var subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
     var networkLabel = col.network === 'moonbeam' ? 'Moonbeam' : 'Moonriver';
     var rankHtml = (col.ranking && col.ranking.rank)
-      ? '<span class="card-rank"><span class="rank-num">#' + col.ranking.rank + '</span> of ' + col.ranking.totalSelected + '</span>'
+      ? '<span class="card-rank"><span class="rank-num">#' + col.ranking.rank + '</span> of ' + col.ranking.totalSelected + '</span>' + trendHtml(col.history)
       : '';
     var fullRanking = allRankings[col.network] || null;
 
