@@ -263,9 +263,12 @@ function getNeighbors(ranking, myAddress, count, tokenPrice, names) {
       isSelf: r.address === addr,
     };
 
-    if (tokenPrice && !result.isSelf) {
-      const gapUsd = gapNum * tokenPrice;
-      result.gapUsd = sign + formatUsd(gapUsd);
+    if (tokenPrice) {
+      if (result.isSelf) {
+        result.stakeUsd = formatUsd(rStakeNum * tokenPrice);
+      } else {
+        result.gapUsd = sign + formatUsd(gapNum * tokenPrice);
+      }
     }
 
     return result;

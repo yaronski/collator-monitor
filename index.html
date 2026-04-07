@@ -175,6 +175,7 @@ body {
 .ranking-table .gap-behind { color: var(--red); }
 .ranking-table .margin-safe   { color: var(--green); }
 .ranking-table .margin-danger { color: var(--red); }
+.ranking-table .self-usd { color: var(--text3); }
 .ranking-table .addr-link { color: var(--text2); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: #444; }
 
 .ranking-table tr.threshold-row td { padding: 0; }
@@ -241,9 +242,7 @@ body {
 .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); font-family: var(--mono); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
 .footer a { color: inherit; text-decoration: underline; text-decoration-color: #444; }
 
-.refresh-wrap { margin-bottom: 24px; }
-.refresh-label { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
-.refresh-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.refresh-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-bottom: 20px; }
 .refresh-bar-fill { height: 100%; background: var(--text3); transition: width 1s linear; }
 
 @media (max-width: 640px) {
@@ -277,10 +276,7 @@ body {
 </div>
 
 <div class="page">
-  <div class="refresh-wrap">
-    <div class="refresh-label">Auto-refresh <span id="countdownText">5:00</span></div>
-    <div class="refresh-bar"><div class="refresh-bar-fill" id="refreshFill" style="width:100%"></div></div>
-  </div>
+  <div class="refresh-bar"><div class="refresh-bar-fill" id="refreshFill" style="width:100%"></div></div>
   <div class="alert-banner" id="alertBanner"></div>
 
   <div class="stats" id="statsRow">
@@ -299,9 +295,8 @@ body {
 </div>
 
 <script>
-const REFRESH_MS = 5 * 60 * 1000;
-let countdownInterval, countdownSec;
-const expandedCards = {};
+var REFRESH_MS = 60 * 60 * 1000;
+var countdownInterval;
 
 function fmt(iso) {
   if (!iso) return '\u2013';
@@ -309,7 +304,7 @@ function fmt(iso) {
 }
 function ago(iso) {
   if (!iso) return '\u2013';
-  const d = Math.floor((Date.now() - new Date(iso)) / 1000);
+  var d = Math.floor((Date.now() - new Date(iso)) / 1000);
   if (d < 60) return d + 's ago';
   if (d < 3600) return Math.floor(d/60) + 'm ago';
   return Math.floor(d/3600) + 'h ago';
@@ -317,14 +312,13 @@ function ago(iso) {
 function statusLabel(s) {
   return { active:'ACTIVE', inactive:'NOT IN SET', error:'ERROR' }[s] || s.toUpperCase();
 }
-
 function setIndicator(state) { document.getElementById('liveIndicator').className = 'indicator ' + state; }
 
 function renderStats(collators) {
-  const v = Object.values(collators);
-  const ac = v.filter(c => c.isActive).length;
-  const ic = v.filter(c => c.statusText === 'inactive').length;
-  const ec = v.filter(c => c.statusText === 'error').length;
+  var v = Object.values(collators);
+  var ac = v.filter(function(c) { return c.isActive; }).length;
+  var ic = v.filter(function(c) { return c.statusText === 'inactive'; }).length;
+  var ec = v.filter(function(c) { return c.statusText === 'error'; }).length;
   document.getElementById('statActive').textContent = ac;
   document.getElementById('statInactive').textContent = ic;
   document.getElementById('statError').textContent = ec;
@@ -335,8 +329,8 @@ function renderStats(collators) {
 
 function sparklineHtml(rank, total) {
   if (!rank || !total || total < 2) return '';
-  const pct = ((rank - 1) / (total - 1)) * 100;
-  const dotClass = pct < 70 ? 'safe' : pct < 90 ? 'caution' : 'danger';
+  var pct = ((rank - 1) / (total - 1)) * 100;
+  var dotClass = pct < 70 ? 'safe' : pct < 90 ? 'caution' : 'danger';
   return '<div class="sparkline">'
     + '<div class="sparkline-track"><div class="sparkline-dot ' + dotClass + '" style="left:' + pct.toFixed(1) + '%"></div></div>'
     + '<div class="sparkline-labels"><span>#1</span><span>#' + total + '</span></div>'
@@ -344,33 +338,34 @@ function sparklineHtml(rank, total) {
 }
 
 function renderRanking(col, fullRanking) {
-  const r = col.ranking;
+  var r = col.ranking;
   if (!r) return '';
-  const subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
-  const token = col.network === 'moonbeam' ? 'GLMR' : 'MOVR';
-  const cardKey = col.network + '-' + col.address.slice(2, 12);
+  var subscanBase = col.network === 'moonbeam' ? 'https://moonbeam.moonscan.io/address/' : 'https://moonriver.moonscan.io/address/';
+  var token = col.network === 'moonbeam' ? 'GLMR' : 'MOVR';
+  var cardKey = col.network + '-' + col.address.slice(2, 12);
 
-  let html = '<div class="ranking">';
+  var html = '<div class="ranking">';
 
   if (r.rank && r.totalSelected) {
     html += sparklineHtml(r.rank, r.totalSelected);
   }
 
-  let hasTable = false;
+  var hasTable = false;
 
   if (r.neighbors && r.neighbors.length) {
     hasTable = true;
-    const hasUsd = r.neighbors.some(n => n.gapUsd);
-    const rows = r.neighbors.map(n => {
-      const name = n.name || (n.address.slice(0, 6) + '\u2026' + n.address.slice(-4));
-      const addrHtml = n.isSelf
+    var hasUsd = r.neighbors.some(function(n) { return n.gapUsd; });
+    var rows = r.neighbors.map(function(n) {
+      var name = n.name || (n.address.slice(0, 6) + '\u2026' + n.address.slice(-4));
+      var addrHtml = n.isSelf
         ? '<td>' + name + '</td>'
         : '<td><a href="' + subscanBase + n.address + '" target="_blank" class="addr-link">' + name + '</a></td>';
-      let gapCell = '';
+      var gapCell = '';
       if (n.isSelf) {
-        gapCell = '<td></td><td></td>' + (hasUsd ? '<td></td>' : '');
+        gapCell = '<td></td><td></td>'
+          + (hasUsd && n.stakeUsd ? '<td class="self-usd">' + n.stakeUsd + '</td>' : (hasUsd ? '<td></td>' : ''));
       } else {
-        const gapClass = n.gap.startsWith('+') ? 'gap-ahead' : n.gap.startsWith('-') ? 'gap-behind' : '';
+        var gapClass = n.gap.startsWith('+') ? 'gap-ahead' : n.gap.startsWith('-') ? 'gap-behind' : '';
         gapCell = '<td class="' + gapClass + '">' + n.gap + ' ' + token + '</td>'
           + '<td class="' + gapClass + '">' + (n.gapPercent || '') + '</td>'
           + (hasUsd ? '<td class="' + gapClass + '">' + (n.gapUsd || '') + '</td>' : '');
@@ -381,15 +376,15 @@ function renderRanking(col, fullRanking) {
         + gapCell + '</tr>';
     }).join('');
 
-    const thCols = '<th>#</th><th style="text-align:left">Collator</th><th>Stake</th><th>Gap</th><th>%</th>'
+    var thCols = '<th>#</th><th style="text-align:left">Collator</th><th>Stake</th><th>Gap</th><th>%</th>'
       + (hasUsd ? '<th>USD</th>' : '');
     html += '<table class="ranking-table"><tr>' + thCols + '</tr>' + rows;
   }
 
   if (r.threshold) {
-    const t = r.threshold;
-    const tName = t.name || (t.address.slice(0, 6) + '\u2026' + t.address.slice(-4));
-    const marginClass = t.margin && !t.margin.startsWith('-') ? 'margin-safe' : 'margin-danger';
+    var t = r.threshold;
+    var tName = t.name || (t.address.slice(0, 6) + '\u2026' + t.address.slice(-4));
+    var marginClass = t.margin && !t.margin.startsWith('-') ? 'margin-safe' : 'margin-danger';
 
     if (!hasTable) {
       html += '<table class="ranking-table">';
@@ -419,19 +414,19 @@ function renderRanking(col, fullRanking) {
   }
 
   if (fullRanking && fullRanking.length > 0) {
-    const isExp = expandedCards[cardKey];
+    var isExp = expandedCards[cardKey];
     html += '<button class="fullset-btn" id="fullbtn-' + cardKey + '" onclick="toggleFullSet(\'' + cardKey + '\',' + fullRanking.length + ')">'
       + (isExp ? '\u25BE Hide full set' : '\u25B8 Show all ' + fullRanking.length + ' collators')
       + '</button>';
 
-    const maxStake = fullRanking[0].stakeEther || 1;
-    const total = r.totalSelected || fullRanking.length;
-    const selfAddr = col.address.toLowerCase();
-    const fsRows = fullRanking.map(entry => {
-      const eName = entry.name || (entry.address.slice(0, 6) + '\u2026' + entry.address.slice(-4));
-      const isSelf = entry.address === selfAddr;
-      const isCutoff = entry.rank === total;
-      const barPct = Math.max(1, Math.round((entry.stakeEther / maxStake) * 100));
+    var maxStake = fullRanking[0].stakeEther || 1;
+    var total = r.totalSelected || fullRanking.length;
+    var selfAddr = col.address.toLowerCase();
+    var fsRows = fullRanking.map(function(entry) {
+      var eName = entry.name || (entry.address.slice(0, 6) + '\u2026' + entry.address.slice(-4));
+      var isSelf = entry.address === selfAddr;
+      var isCutoff = entry.rank === total;
+      var barPct = Math.max(1, Math.round((entry.stakeEther / maxStake) * 100));
       return '<tr class="' + (isSelf ? 'self' : '') + (isCutoff ? ' cutoff' : '') + '">'
         + '<td>' + entry.rank + '</td>'
         + '<td>' + (isSelf ? (col.label || eName) : '<a href="' + subscanBase + entry.address + '" target="_blank" class="addr-link">' + eName + '</a>') + '</td>'
@@ -541,22 +536,19 @@ async function load() {
   }
 }
 
-function startCountdown() {
+function startRefreshCycle() {
   clearInterval(countdownInterval);
-  countdownSec = REFRESH_MS / 1000;
+  var sec = REFRESH_MS / 1000;
   var fill = document.getElementById('refreshFill');
-  var countdownText = document.getElementById('countdownText');
+  fill.style.width = '100%';
   countdownInterval = setInterval(function() {
-    countdownSec--;
-    fill.style.width = Math.max(0, (countdownSec / (REFRESH_MS / 1000)) * 100) + '%';
-    var m = Math.floor(countdownSec / 60);
-    var s = countdownSec % 60;
-    countdownText.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-    if (countdownSec <= 0) { clearInterval(countdownInterval); load().then(startCountdown); }
+    sec--;
+    fill.style.width = Math.max(0, (sec / (REFRESH_MS / 1000)) * 100) + '%';
+    if (sec <= 0) { clearInterval(countdownInterval); load().then(startRefreshCycle); }
   }, 1000);
 }
 
-load().then(startCountdown);
+load().then(startRefreshCycle);
 </script>
 </body>
 </html>
