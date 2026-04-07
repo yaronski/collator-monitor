@@ -101,18 +101,23 @@ async function fetchCollatorNames(network, addresses) {
 
   const names = {};
   for (const addr of addresses) {
-    try {
-      const res = await fetch(base + addr, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)' },
-        signal: AbortSignal.timeout(10000),
-      });
-      if (!res.ok) continue;
-      const html = await res.text();
-      const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
-      if (match && match[1].trim()) {
-        names[addr] = match[1].trim();
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetch(base + addr, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)' },
+          signal: AbortSignal.timeout(10000),
+        });
+        if (!res.ok) { await new Promise(r => setTimeout(r, 300)); continue; }
+        const html = await res.text();
+        const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
+        if (match && match[1].trim()) {
+          names[addr] = match[1].trim();
+        }
+        break;
+      } catch (_) {
+        await new Promise(r => setTimeout(r, 300));
       }
-    } catch (_) {}
+    }
     await new Promise(r => setTimeout(r, 150));
   }
   const count = Object.keys(names).length;
@@ -346,11 +351,24 @@ async function main() {
   }
 
   console.log('\nFetching collator names from Moonscan…');
+  const prevNames = {};
+  for (const net of networks) {
+    prevNames[net] = {};
+    for (const r of (prev.rankings?.[net] || [])) {
+      if (r.name) prevNames[net][r.address] = r.name;
+    }
+  }
   const allNames = {};
   for (const net of networks) {
     const addrs = allRankingAddrs[net] || [];
     if (addrs.length) {
       allNames[net] = await fetchCollatorNames(net, addrs);
+    }
+    for (const addr of Object.keys(prevNames[net])) {
+      if (!allNames[net]) allNames[net] = {};
+      if (!allNames[net][addr] && prevNames[net][addr]) {
+        allNames[net][addr] = prevNames[net][addr];
+      }
     }
   }
 
