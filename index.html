@@ -152,6 +152,7 @@ body {
 .position-map .seg.self { background: var(--green); box-shadow: 0 0 5px rgba(74,222,128,0.5); }
 .position-map .seg.cutoff { background: var(--amber); opacity: 0.6; }
 .position-map-label { position: absolute; top: 0; transform: translateX(-50%); font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 600; white-space: nowrap; }
+.position-map-ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 2px; }
 
 .ranking-table { width: 100%; font-family: var(--mono); font-size: 11px; border-collapse: collapse; table-layout: fixed; }
 .ranking-table th {
@@ -357,6 +358,7 @@ function positionMapHtml(rank, total) {
   return '<div class="position-map">'
     + '<div class="position-map-label" style="left:' + pct.toFixed(1) + '%">#' + rank + '</div>'
     + '<div class="position-map-track">' + segs + '</div>'
+    + '<div class="position-map-ends"><span>#1</span><span>#' + total + '</span></div>'
     + '</div>';
 }
 
