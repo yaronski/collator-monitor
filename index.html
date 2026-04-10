@@ -544,9 +544,13 @@ function renderCards(collators, allRankings) {
   var statusOrder = { inactive:0, error:1, active:3 };
   var networkOrder = { moonbeam:0, moonriver:1 };
   entries.sort(function(a,b) {
-    var n = (networkOrder[a.network]||9) - (networkOrder[b.network]||9);
+    var na = networkOrder.hasOwnProperty(a.network) ? networkOrder[a.network] : 9;
+    var nb = networkOrder.hasOwnProperty(b.network) ? networkOrder[b.network] : 9;
+    var n = na - nb;
     if (n !== 0) return n;
-    var s = (statusOrder[a.statusText]||9) - (statusOrder[b.statusText]||9);
+    var sa = statusOrder.hasOwnProperty(a.statusText) ? statusOrder[a.statusText] : 9;
+    var sb = statusOrder.hasOwnProperty(b.statusText) ? statusOrder[b.statusText] : 9;
+    var s = sa - sb;
     if (s !== 0) return s;
     var ra = a.ranking?.rank || 9999;
     var rb = b.ranking?.rank || 9999;
