@@ -365,9 +365,9 @@ function trendHtml(history) {
   var diff = prev.rank - last.rank;
   var days = Math.round(lookback / 24);
   var span = days >= 1 ? days + 'd' : lookback + 'h';
-  if (diff > 0) return { cls: 'trend-up', text: '\u2191' + diff + ' in ' + span };
-  if (diff < 0) return { cls: 'trend-down', text: '\u2193' + (-diff) + ' in ' + span };
-  return { cls: 'trend-same', text: '\u2192 steady (' + span + ')' };
+  if (diff > 0) return { cls: 'trend-up', text: '\u2191\u2009' + diff + ' in ' + span };
+  if (diff < 0) return { cls: 'trend-down', text: '\u2193\u2009' + (-diff) + ' in ' + span };
+  return { cls: 'trend-same', text: '\u2192\u2009 steady (' + span + ')' };
 }
 
 function renderStats(collators) {
