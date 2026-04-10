@@ -100,53 +100,32 @@ async function fetchCollatorNames(network, addresses) {
     : 'https://moonriver.moonscan.io/address/';
 
   const names = {};
+  let failed = 0;
   for (const addr of addresses) {
-    for (let attempt = 0; attempt < 2; attempt++) {
+    let got = false;
+    for (let attempt = 0; attempt < 2 && !got; attempt++) {
       try {
         const res = await fetch(base + addr, {
           headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36' },
-          signal: AbortSignal.timeout(10000),
+          signal: AbortSignal.timeout(15000),
         });
-        if (!res.ok) { await new Promise(r => setTimeout(r, 500)); continue; }
+        if (!res.ok) { await new Promise(r => setTimeout(r, 1000)); continue; }
         const html = await res.text();
         const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
         if (match && match[1].trim()) {
           names[addr] = match[1].trim();
+          got = true;
         }
-        break;
       } catch (_) {
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 1000));
       }
     }
-    await new Promise(r => setTimeout(r, 150));
+    if (!got) failed++;
+    await new Promise(r => setTimeout(r, 500));
   }
   const count = Object.keys(names).length;
-  console.log(`  ✓ Moonscan names: ${count}/${addresses.length} for ${network}`);
+  console.log(`  ✓ Moonscan names: ${count}/${addresses.length} for ${network}` + (failed ? ` (${failed} failed)` : ''));
   return names;
-}
-
-async function fetchSingleName(network, addr) {
-  const base = network === 'moonbeam'
-    ? 'https://moonbeam.moonscan.io/address/'
-    : 'https://moonriver.moonscan.io/address/';
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const res = await fetch(base + addr, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36' },
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!res.ok) { await new Promise(r => setTimeout(r, 2000)); continue; }
-      const html = await res.text();
-      const match = html.match(/Public Name Tag[^]*?<span[^>]*>([^<]+)<\/span>/);
-      if (match && match[1].trim()) {
-        return match[1].trim();
-      }
-      return null;
-    } catch (_) {
-      await new Promise(r => setTimeout(r, 2000));
-    }
-  }
-  return null;
 }
 
 async function fetchPrices() {
@@ -385,30 +364,10 @@ async function main() {
   const allNames = {};
   for (const net of networks) {
     const addrs = allRankingAddrs[net] || [];
-    if (addrs.length) {
-      allNames[net] = await fetchCollatorNames(net, addrs);
-    }
-    for (const addr of Object.keys(prevNames[net])) {
-      if (!allNames[net]) allNames[net] = {};
-      if (!allNames[net][addr] && prevNames[net][addr]) {
-        allNames[net][addr] = prevNames[net][addr];
-      }
-    }
-  }
-
-  console.log('\nFetching missing names for configured collators…');
-  for (const col of collators) {
-    if (!col.address || col.address === '0xYOUR_COLLATOR_ADDRESS_HERE') continue;
-    const addr = col.address.toLowerCase();
-    if (!allNames[col.network]) allNames[col.network] = {};
-    if (!allNames[col.network][addr]) {
-      const name = await fetchSingleName(col.network, addr);
-      if (name) {
-        allNames[col.network][addr] = name;
-        console.log(`  ✓ Got name for ${shortAddr(addr)}: ${name}`);
-      } else if (prevNames[col.network]?.[addr]) {
-        allNames[col.network][addr] = prevNames[col.network][addr];
-        console.log(`  → Using cached name for ${shortAddr(addr)}: ${prevNames[col.network][addr]}`);
+    allNames[net] = addrs.length ? await fetchCollatorNames(net, addrs) : {};
+    for (const [addr, name] of Object.entries(prevNames[net] || {})) {
+      if (!allNames[net][addr]) {
+        allNames[net][addr] = name;
       }
     }
   }
@@ -464,8 +423,16 @@ async function main() {
     const consecutiveInactive = isActive ? 0 : (p.consecutiveInactive ?? 0) + 1;
 
     const wasAlertedInactive = p.alertedInactive ?? false;
+    const wasAlertedNearCutoff = p.alertedNearCutoff ?? false;
     const triggerInactiveAlert = !isActive && consecutiveInactive >= threshold && !wasAlertedInactive;
     const triggerRecoveryAlert = isActive && wasAlertedInactive;
+
+    const ranking = getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network], allNames[col.network] || {});
+    const rank = ranking?.rank;
+    const totalSelected = ranking?.totalSelected;
+    const nearCutoff = isActive && rank && totalSelected && rank >= totalSelected - 1;
+    const triggerNearCutoffAlert = nearCutoff && !wasAlertedNearCutoff;
+    const triggerSafeFromCutoff = !nearCutoff && wasAlertedNearCutoff && isActive;
 
     let statusText;
     if (!isActive) statusText = 'inactive';
@@ -488,11 +455,30 @@ async function main() {
       );
     }
 
+    if (triggerNearCutoffAlert) {
+      await sendTelegram(
+        `⚠️ <b>Collator near cutoff!</b>\n\n` +
+        `<b>${label}</b>\n<code>${col.address}</code>\n` +
+        `Network: ${col.network} · Round: ${currentRound}\n` +
+        `Rank: #${rank} of ${totalSelected} — ${rank === totalSelected ? 'LAST in set' : 'second to last'}\n` +
+        `At risk of dropping out.`
+      );
+    }
+
+    if (triggerSafeFromCutoff) {
+      await sendTelegram(
+        `🟢 <b>Collator moved away from cutoff</b>\n\n` +
+        `<b>${label}</b>\n<code>${col.address}</code>\n` +
+        `Network: ${col.network} · Round: ${currentRound}\n` +
+        `Rank: #${rank} of ${totalSelected}`
+      );
+    }
+
     const pointsStr = points !== null ? points : '–';
     console.log(`  Round: ${currentRound} | Active: ${isActive} | Points this round: ${pointsStr}`);
     if (!isActive) console.log(`  Consecutive inactive checks: ${consecutiveInactive}/${threshold}`);
+    if (nearCutoff) console.log(`  ⚠ Near cutoff: rank ${rank}/${totalSelected}`);
 
-    const ranking = getNeighbors(rankings[col.network], col.address, 2, prices?.[col.network], allNames[col.network] || {});
     if (ranking?.rank) {
       console.log(`  Rank: ${ranking.rank}/${ranking.totalSelected} | Stake: ${ranking.myStake}`);
     }
@@ -508,6 +494,7 @@ async function main() {
       currentRound,
       consecutiveInactive,
       alertedInactive: !isActive && (triggerInactiveAlert || wasAlertedInactive),
+      alertedNearCutoff: nearCutoff,
       statusText,
       lastChecked: now,
       lastError: null,
