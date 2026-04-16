@@ -1,18 +1,18 @@
 {
-  "lastUpdated": "2026-04-16T21:32:09.801Z",
+  "lastUpdated": "2026-04-16T22:27:33.376Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
       "label": "crifferent",
       "isActive": true,
-      "points": 460,
+      "points": 540,
       "currentRound": 6070,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-16T21:32:09.801Z",
+      "lastChecked": "2026-04-16T22:27:33.376Z",
       "lastError": null,
       "ranking": {
         "rank": 20,
@@ -28,7 +28,7 @@
             "gap": "+38.21k",
             "gapPercent": "+0.9%",
             "isSelf": false,
-            "gapUsd": "+$455"
+            "gapUsd": "+$457"
           },
           {
             "rank": 19,
@@ -38,7 +38,7 @@
             "gap": "+19.34k",
             "gapPercent": "+0.5%",
             "isSelf": false,
-            "gapUsd": "+$230"
+            "gapUsd": "+$231"
           },
           {
             "rank": 20,
@@ -48,7 +48,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$47.9k"
+            "stakeUsd": "$48.1k"
           },
           {
             "rank": 21,
@@ -78,7 +78,7 @@
           "stakeFormatted": "1.16m",
           "margin": "+2.86m",
           "marginPercent": "+71.1%",
-          "marginUsd": "+$34.1k"
+          "marginUsd": "+$34.2k"
         }
       },
       "history": [
@@ -745,6 +745,10 @@
         {
           "ts": "2026-04-16T21:32:09.801Z",
           "rank": 20
+        },
+        {
+          "ts": "2026-04-16T22:27:33.376Z",
+          "rank": 20
         }
       ]
     },
@@ -753,13 +757,13 @@
       "network": "moonriver",
       "label": "Crifferent",
       "isActive": true,
-      "points": 60,
+      "points": 280,
       "currentRound": 20893,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-16T21:32:09.801Z",
+      "lastChecked": "2026-04-16T22:27:33.376Z",
       "lastError": null,
       "ranking": {
         "rank": 59,
@@ -1492,6 +1496,10 @@
         {
           "ts": "2026-04-16T21:32:09.801Z",
           "rank": 59
+        },
+        {
+          "ts": "2026-04-16T22:27:33.376Z",
+          "rank": 59
         }
       ]
     },
@@ -1500,13 +1508,13 @@
       "network": "moonbeam",
       "label": "Hetavalidation",
       "isActive": true,
-      "points": 340,
+      "points": 460,
       "currentRound": 6070,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-16T21:32:09.801Z",
+      "lastChecked": "2026-04-16T22:27:33.376Z",
       "lastError": null,
       "ranking": {
         "rank": 21,
@@ -1522,7 +1530,7 @@
             "gap": "+22.70k",
             "gapPercent": "+0.6%",
             "isSelf": false,
-            "gapUsd": "+$270"
+            "gapUsd": "+$271"
           },
           {
             "rank": 20,
@@ -1542,7 +1550,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$47.9k"
+            "stakeUsd": "$48.1k"
           },
           {
             "rank": 22,
@@ -1572,7 +1580,7 @@
           "stakeFormatted": "1.16m",
           "margin": "+2.86m",
           "marginPercent": "+71.1%",
-          "marginUsd": "+$34.0k"
+          "marginUsd": "+$34.2k"
         }
       },
       "history": [
@@ -2239,6 +2247,10 @@
         {
           "ts": "2026-04-16T21:32:09.801Z",
           "rank": 21
+        },
+        {
+          "ts": "2026-04-16T22:27:33.376Z",
+          "rank": 21
         }
       ]
     },
@@ -2247,13 +2259,13 @@
       "network": "moonriver",
       "label": "ExtraCoin",
       "isActive": true,
-      "points": 60,
+      "points": 120,
       "currentRound": 20893,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-16T21:32:09.801Z",
+      "lastChecked": "2026-04-16T22:27:33.376Z",
       "lastError": null,
       "ranking": {
         "rank": 62,
@@ -2986,12 +2998,16 @@
         {
           "ts": "2026-04-16T21:32:09.801Z",
           "rank": 62
+        },
+        {
+          "ts": "2026-04-16T22:27:33.376Z",
+          "rank": 62
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.01190352,
+    "moonbeam": 0.01195341,
     "moonriver": 1.42
   },
   "rankings": {
@@ -3449,7 +3465,7 @@
         "address": "0x7dbb452691866b457dd9179e75fc043fb4ce824b",
         "name": null,
         "stakeFormatted": "1.20m",
-        "stakeEther": 1201472.1888
+        "stakeEther": 1201972.1868
       },
       {
         "rank": 66,
