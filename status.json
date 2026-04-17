@@ -1,18 +1,18 @@
 {
-  "lastUpdated": "2026-04-17T18:39:08.008Z",
+  "lastUpdated": "2026-04-17T19:49:01.811Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
       "label": "crifferent",
       "isActive": true,
-      "points": 440,
+      "points": 540,
       "currentRound": 6073,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-17T18:39:08.008Z",
+      "lastChecked": "2026-04-17T19:49:01.811Z",
       "lastError": null,
       "ranking": {
         "rank": 21,
@@ -28,7 +28,7 @@
             "gap": "+38.51k",
             "gapPercent": "+1.0%",
             "isSelf": false,
-            "gapUsd": "+$690"
+            "gapUsd": "+$726"
           },
           {
             "rank": 20,
@@ -38,7 +38,7 @@
             "gap": "+19.45k",
             "gapPercent": "+0.5%",
             "isSelf": false,
-            "gapUsd": "+$349"
+            "gapUsd": "+$367"
           },
           {
             "rank": 21,
@@ -48,7 +48,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$72.1k"
+            "stakeUsd": "$75.8k"
           },
           {
             "rank": 22,
@@ -58,7 +58,7 @@
             "gap": "-1.63k",
             "gapPercent": "-0.0%",
             "isSelf": false,
-            "gapUsd": "-$29"
+            "gapUsd": "-$31"
           },
           {
             "rank": 23,
@@ -68,7 +68,7 @@
             "gap": "-4.64k",
             "gapPercent": "-0.1%",
             "isSelf": false,
-            "gapUsd": "-$83"
+            "gapUsd": "-$87"
           }
         ],
         "threshold": {
@@ -78,14 +78,10 @@
           "stakeFormatted": "1.18m",
           "margin": "+2.84m",
           "marginPercent": "+70.6%",
-          "marginUsd": "+$50.9k"
+          "marginUsd": "+$53.5k"
         }
       },
       "history": [
-        {
-          "ts": "2026-04-07T22:25:49.786Z",
-          "rank": 27
-        },
         {
           "ts": "2026-04-07T23:27:04.908Z",
           "rank": 26
@@ -753,6 +749,10 @@
         {
           "ts": "2026-04-17T18:39:08.008Z",
           "rank": 21
+        },
+        {
+          "ts": "2026-04-17T19:49:01.811Z",
+          "rank": 21
         }
       ]
     },
@@ -761,36 +761,36 @@
       "network": "moonriver",
       "label": "Crifferent",
       "isActive": true,
-      "points": 40,
+      "points": 140,
       "currentRound": 20903,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-17T18:39:08.008Z",
+      "lastChecked": "2026-04-17T19:49:01.811Z",
       "lastError": null,
       "ranking": {
         "rank": 59,
         "totalSelected": 72,
         "myStake": "20.01k",
-        "myStakeNum": 20007.849385826772,
+        "myStakeNum": 20008.471598945096,
         "neighbors": [
           {
             "rank": 57,
             "address": "0x5d9bc481749420cffb2bf5aef5c5e2a0ffe04e88",
             "name": "Utopia &amp; Moonpets",
             "stakeFormatted": "20.51k",
-            "gap": "+500.91",
+            "gap": "+500.86",
             "gapPercent": "+2.5%",
             "isSelf": false,
-            "gapUsd": "+$1.6k"
+            "gapUsd": "+$1.5k"
           },
           {
             "rank": 58,
             "address": "0xa64634935589a435f5711fb8d35f144686737e51",
             "name": "0xa646…7e51",
             "stakeFormatted": "20.39k",
-            "gap": "+383.43",
+            "gap": "+382.90",
             "gapPercent": "+1.9%",
             "isSelf": false,
             "gapUsd": "+$1.2k"
@@ -803,24 +803,24 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$63.0k"
+            "stakeUsd": "$60.6k"
           },
           {
             "rank": 60,
             "address": "0x20108120db99a460ede889b7d1a0a683bffa959a",
             "name": "0x2010…959a",
             "stakeFormatted": "19.74k",
-            "gap": "-264.43",
+            "gap": "-265.05",
             "gapPercent": "-1.3%",
             "isSelf": false,
-            "gapUsd": "-$833"
+            "gapUsd": "-$803"
           },
           {
             "rank": 61,
             "address": "0xe6089303ede986511b3bba973093e3231f3a00c2",
             "name": "0xe608…00c2",
-            "stakeFormatted": "19.62k",
-            "gap": "-383.14",
+            "stakeFormatted": "19.63k",
+            "gap": "-382.15",
             "gapPercent": "-1.9%",
             "isSelf": false,
             "gapUsd": "-$1.2k"
@@ -833,14 +833,10 @@
           "stakeFormatted": "13.36k",
           "margin": "+6.64k",
           "marginPercent": "+33.2%",
-          "marginUsd": "+$20.9k"
+          "marginUsd": "+$20.1k"
         }
       },
       "history": [
-        {
-          "ts": "2026-04-07T22:25:49.786Z",
-          "rank": 58
-        },
         {
           "ts": "2026-04-07T23:27:04.908Z",
           "rank": 58
@@ -1508,6 +1504,10 @@
         {
           "ts": "2026-04-17T18:39:08.008Z",
           "rank": 59
+        },
+        {
+          "ts": "2026-04-17T19:49:01.811Z",
+          "rank": 59
         }
       ]
     },
@@ -1516,13 +1516,13 @@
       "network": "moonbeam",
       "label": "Hetavalidation",
       "isActive": true,
-      "points": 700,
+      "points": 860,
       "currentRound": 6073,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-17T18:39:08.008Z",
+      "lastChecked": "2026-04-17T19:49:01.811Z",
       "lastError": null,
       "ranking": {
         "rank": 22,
@@ -1538,7 +1538,7 @@
             "gap": "+21.08k",
             "gapPercent": "+0.5%",
             "isSelf": false,
-            "gapUsd": "+$378"
+            "gapUsd": "+$397"
           },
           {
             "rank": 21,
@@ -1548,7 +1548,7 @@
             "gap": "+1.63k",
             "gapPercent": "+0.0%",
             "isSelf": false,
-            "gapUsd": "+$29"
+            "gapUsd": "+$31"
           },
           {
             "rank": 22,
@@ -1558,7 +1558,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$72.1k"
+            "stakeUsd": "$75.8k"
           },
           {
             "rank": 23,
@@ -1568,7 +1568,7 @@
             "gap": "-3.00k",
             "gapPercent": "-0.1%",
             "isSelf": false,
-            "gapUsd": "-$54"
+            "gapUsd": "-$57"
           },
           {
             "rank": 24,
@@ -1578,7 +1578,7 @@
             "gap": "-3.62k",
             "gapPercent": "-0.1%",
             "isSelf": false,
-            "gapUsd": "-$65"
+            "gapUsd": "-$68"
           }
         ],
         "threshold": {
@@ -1588,14 +1588,10 @@
           "stakeFormatted": "1.18m",
           "margin": "+2.84m",
           "marginPercent": "+70.5%",
-          "marginUsd": "+$50.9k"
+          "marginUsd": "+$53.5k"
         }
       },
       "history": [
-        {
-          "ts": "2026-04-07T22:25:49.786Z",
-          "rank": 25
-        },
         {
           "ts": "2026-04-07T23:27:04.908Z",
           "rank": 24
@@ -2263,6 +2259,10 @@
         {
           "ts": "2026-04-17T18:39:08.008Z",
           "rank": 22
+        },
+        {
+          "ts": "2026-04-17T19:49:01.811Z",
+          "rank": 22
         }
       ]
     },
@@ -2271,13 +2271,13 @@
       "network": "moonriver",
       "label": "ExtraCoin",
       "isActive": true,
-      "points": 20,
+      "points": 180,
       "currentRound": 20903,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-04-17T18:39:08.008Z",
+      "lastChecked": "2026-04-17T19:49:01.811Z",
       "lastError": null,
       "ranking": {
         "rank": 62,
@@ -2299,11 +2299,11 @@
             "rank": 61,
             "address": "0xe6089303ede986511b3bba973093e3231f3a00c2",
             "name": "0xe608…00c2",
-            "stakeFormatted": "19.62k",
-            "gap": "+340.62",
+            "stakeFormatted": "19.63k",
+            "gap": "+342.24",
             "gapPercent": "+1.8%",
             "isSelf": false,
-            "gapUsd": "+$1.1k"
+            "gapUsd": "+$1.0k"
           },
           {
             "rank": 62,
@@ -2313,7 +2313,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$60.7k"
+            "stakeUsd": "$58.4k"
           },
           {
             "rank": 63,
@@ -2323,17 +2323,17 @@
             "gap": "-53.20",
             "gapPercent": "-0.3%",
             "isSelf": false,
-            "gapUsd": "-$168"
+            "gapUsd": "-$161"
           },
           {
             "rank": 64,
             "address": "0x16e1b9c33991bbf9775210739073d69aa979bb08",
             "name": "0x16e1…bb08",
             "stakeFormatted": "18.60k",
-            "gap": "-685.33",
+            "gap": "-685.22",
             "gapPercent": "-3.6%",
             "isSelf": false,
-            "gapUsd": "-$2.2k"
+            "gapUsd": "-$2.1k"
           }
         ],
         "threshold": {
@@ -2343,14 +2343,10 @@
           "stakeFormatted": "13.36k",
           "margin": "+5.92k",
           "marginPercent": "+30.7%",
-          "marginUsd": "+$18.6k"
+          "marginUsd": "+$17.9k"
         }
       },
       "history": [
-        {
-          "ts": "2026-04-07T22:25:49.786Z",
-          "rank": 61
-        },
         {
           "ts": "2026-04-07T23:27:04.908Z",
           "rank": 61
@@ -3018,13 +3014,17 @@
         {
           "ts": "2026-04-17T18:39:08.008Z",
           "rank": 62
+        },
+        {
+          "ts": "2026-04-17T19:49:01.811Z",
+          "rank": 62
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.0179227,
-    "moonriver": 3.15
+    "moonbeam": 0.01884284,
+    "moonriver": 3.03
   },
   "rankings": {
     "moonbeam": [
@@ -3215,7 +3215,7 @@
         "address": "0x7f1f9a444a22d8d39efdfdd9c441070f36a20750",
         "name": "Simply Staking 2",
         "stakeFormatted": "3.96m",
-        "stakeEther": 3962178.6319
+        "stakeEther": 3962398.0184
       },
       {
         "rank": 28,
@@ -3348,7 +3348,7 @@
         "address": "0x766ec09017d8d206c75a111446fe535114ff039f",
         "name": "TSLA",
         "stakeFormatted": "3.03m",
-        "stakeEther": 3026583.0996
+        "stakeEther": 3026618.9028
       },
       {
         "rank": 47,
@@ -3376,21 +3376,21 @@
         "address": "0x084c922ae4529606d18d40fbc6cb2765f70c28e1",
         "name": null,
         "stakeFormatted": "1.90m",
-        "stakeEther": 1896719.1436
+        "stakeEther": 1896724.9436
       },
       {
         "rank": 51,
         "address": "0x2e89c950c2eba16c117ce30a5ba63ed2997a0946",
         "name": null,
         "stakeFormatted": "1.66m",
-        "stakeEther": 1655790.3438
+        "stakeEther": 1655890.3438
       },
       {
         "rank": 52,
         "address": "0xd3d6eec8cee90c3b7abd048be9b645fd1f6d9978",
         "name": null,
         "stakeFormatted": "1.53m",
-        "stakeEther": 1525900.2208
+        "stakeEther": 1526003.5444
       },
       {
         "rank": 53,
@@ -3432,7 +3432,7 @@
         "address": "0x65820bab4000f6a4db0ad0ea6b2a7817c2f5e801",
         "name": null,
         "stakeFormatted": "1.32m",
-        "stakeEther": 1321873.1538
+        "stakeEther": 1321924.9873
       },
       {
         "rank": 59,
@@ -3453,7 +3453,7 @@
         "address": "0xfc30bb8b7665168927f8d533919bed3f0123f1f9",
         "name": null,
         "stakeFormatted": "1.29m",
-        "stakeEther": 1290326.2134
+        "stakeEther": 1292111.2134
       },
       {
         "rank": 62,
@@ -3520,17 +3520,17 @@
       },
       {
         "rank": 71,
+        "address": "0x2c60b5d9461ce80cddd0d19abd4c76749c82d444",
+        "name": null,
+        "stakeFormatted": "1.19m",
+        "stakeEther": 1189137.7522
+      },
+      {
+        "rank": 72,
         "address": "0xb4b7a78852581759e2e0c4b284a76d7f70b475f8",
         "name": null,
         "stakeFormatted": "1.19m",
         "stakeEther": 1188865.4671
-      },
-      {
-        "rank": 72,
-        "address": "0x2c60b5d9461ce80cddd0d19abd4c76749c82d444",
-        "name": null,
-        "stakeFormatted": "1.19m",
-        "stakeEther": 1188050.7522
       },
       {
         "rank": 73,
@@ -3588,7 +3588,7 @@
         "address": "0xa5929b2e3083fb0a7814238b4e05235f659dcf81",
         "name": "Simply Staking",
         "stakeFormatted": "53.94k",
-        "stakeEther": 53937.628
+        "stakeEther": 53943.7113
       },
       {
         "rank": 5,
@@ -3601,36 +3601,36 @@
         "rank": 6,
         "address": "0x97b0ce75decdff605e429b84c3b40eb0bb233473",
         "name": "Moonriver Orbiter Pool 2",
-        "stakeFormatted": "41.90k",
-        "stakeEther": 41904.7353
+        "stakeFormatted": "41.91k",
+        "stakeEther": 41905.0745
       },
       {
         "rank": 7,
         "address": "0x9c8207a4d3381b8afeeaeda884bdc9c0e12003ba",
         "name": "Max Rewards",
         "stakeFormatted": "38.96k",
-        "stakeEther": 38958.2381
+        "stakeEther": 38958.2658
       },
       {
         "rank": 8,
         "address": "0xaa011f68bbfe45c0ea35761d96b39322da93a5dc",
         "name": "Synclub 2",
         "stakeFormatted": "37.69k",
-        "stakeEther": 37694.7159
+        "stakeEther": 37694.7933
       },
       {
         "rank": 9,
-        "address": "0x58c9d506e2f02051219f7d80e68599cccb654072",
-        "name": "Allnodes 2",
-        "stakeFormatted": "36.16k",
-        "stakeEther": 36163.4032
-      },
-      {
-        "rank": 10,
         "address": "0x2ac328cb3a4aeada14290b5caf4e8406863d83bf",
         "name": "Synclub",
         "stakeFormatted": "36.02k",
-        "stakeEther": 36018.4025
+        "stakeEther": 36018.4316
+      },
+      {
+        "rank": 10,
+        "address": "0x58c9d506e2f02051219f7d80e68599cccb654072",
+        "name": "Allnodes 2",
+        "stakeFormatted": "35.94k",
+        "stakeEther": 35936.239
       },
       {
         "rank": 11,
@@ -3651,7 +3651,7 @@
         "address": "0x9eee895ea659483745895f38c821b2085aed04a1",
         "name": "All Nodes 3",
         "stakeFormatted": "30.50k",
-        "stakeEther": 30496.5634
+        "stakeEther": 30497.2922
       },
       {
         "rank": 14,
@@ -3672,14 +3672,14 @@
         "address": "0xfd551de6f790a959f0c3b88c67918fcd7202b65c",
         "name": null,
         "stakeFormatted": "28.11k",
-        "stakeEther": 28109.0323
+        "stakeEther": 28109.4351
       },
       {
         "rank": 17,
         "address": "0xe8ebdefcdf683425b0147ce811d89c977a8d2fa9",
         "name": "Stake4Ever",
         "stakeFormatted": "27.89k",
-        "stakeEther": 27886.3671
+        "stakeEther": 27886.6671
       },
       {
         "rank": 18,
@@ -3707,14 +3707,14 @@
         "address": "0x6477c1006ab85e6d94e8e7371f23b782fe95ca6b",
         "name": "Foundation 1",
         "stakeFormatted": "26.92k",
-        "stakeEther": 26915.7097
+        "stakeEther": 26921.8345
       },
       {
         "rank": 22,
         "address": "0x7234af900afaca291b551b0386b962dd9d571434",
         "name": "Moonsama 2",
         "stakeFormatted": "26.67k",
-        "stakeEther": 26666.2142
+        "stakeEther": 26666.303
       },
       {
         "rank": 23,
@@ -3728,14 +3728,14 @@
         "address": "0x1980e75f1b1cdaae3b2f79664c7cb83b86a3d404",
         "name": "Diversified Validator Network",
         "stakeFormatted": "26.43k",
-        "stakeEther": 26428.0922
+        "stakeEther": 26428.4777
       },
       {
         "rank": 25,
         "address": "0xf51610da87c5c594d09379f948eb5cd96ef0c63a",
         "name": "Moonriver Orbiter Pool 7",
         "stakeFormatted": "26.39k",
-        "stakeEther": 26388.7447
+        "stakeEther": 26388.8966
       },
       {
         "rank": 26,
@@ -3805,14 +3805,14 @@
         "address": "0x2bcb75e8590f945596e44a94c6b9ba327745117a",
         "name": "PureStake 3",
         "stakeFormatted": "25.08k",
-        "stakeEther": 25081.9032
+        "stakeEther": 25082.5754
       },
       {
         "rank": 36,
         "address": "0x84b3dcdd2ca4b0f90c0af00ff46569c206d09f66",
         "name": "FiveLayer Validation",
         "stakeFormatted": "24.81k",
-        "stakeEther": 24806.6758
+        "stakeEther": 24807.354
       },
       {
         "rank": 37,
@@ -3826,7 +3826,7 @@
         "address": "0x7792e207cbf14ca33bde5cf0ec0741cc3405c5c5",
         "name": "Moonriver Orbiter Pool 8",
         "stakeFormatted": "24.73k",
-        "stakeEther": 24733.9795
+        "stakeEther": 24734.0413
       },
       {
         "rank": 39,
@@ -3875,7 +3875,7 @@
         "address": "0xb4906b74e00ada233f2aef4a609bf1bec43699b4",
         "name": "SubStake",
         "stakeFormatted": "22.64k",
-        "stakeEther": 22637.6588
+        "stakeEther": 22637.8517
       },
       {
         "rank": 46,
@@ -3910,7 +3910,7 @@
         "address": "0x19eaa6aae65e4b02539de493a735b81d1d848829",
         "name": "Anamix",
         "stakeFormatted": "22.03k",
-        "stakeEther": 22031.1779
+        "stakeEther": 22031.6913
       },
       {
         "rank": 51,
@@ -3931,14 +3931,14 @@
         "address": "0xbd7562319f1f0fd658e0cc4af5970ea45946b08f",
         "name": "Brightlystake",
         "stakeFormatted": "21.42k",
-        "stakeEther": 21419.3515
+        "stakeEther": 21419.8452
       },
       {
         "rank": 54,
         "address": "0xdd16c266534c6729112b8aa501f797ec33c122f7",
         "name": "LetzBake",
         "stakeFormatted": "21.42k",
-        "stakeEther": 21418.1529
+        "stakeEther": 21418.5717
       },
       {
         "rank": 55,
@@ -3951,29 +3951,29 @@
         "rank": 56,
         "address": "0xfd45803566ab776b2e6ae6a19fa423ddc954a93d",
         "name": null,
-        "stakeFormatted": "20.66k",
-        "stakeEther": 20658.3216
+        "stakeFormatted": "20.67k",
+        "stakeEther": 20668.3933
       },
       {
         "rank": 57,
         "address": "0x5d9bc481749420cffb2bf5aef5c5e2a0ffe04e88",
         "name": "Utopia &amp; Moonpets",
         "stakeFormatted": "20.51k",
-        "stakeEther": 20508.7631
+        "stakeEther": 20509.3273
       },
       {
         "rank": 58,
         "address": "0xa64634935589a435f5711fb8d35f144686737e51",
         "name": null,
         "stakeFormatted": "20.39k",
-        "stakeEther": 20391.2787
+        "stakeEther": 20391.3708
       },
       {
         "rank": 59,
         "address": "0x693ab260de2a31c1b5d7dc9cb253b87ed9b1f385",
         "name": "Crifferent",
         "stakeFormatted": "20.01k",
-        "stakeEther": 20007.8494
+        "stakeEther": 20008.4716
       },
       {
         "rank": 60,
@@ -3986,8 +3986,8 @@
         "rank": 61,
         "address": "0xe6089303ede986511b3bba973093e3231f3a00c2",
         "name": null,
-        "stakeFormatted": "19.62k",
-        "stakeEther": 19624.7052
+        "stakeFormatted": "19.63k",
+        "stakeEther": 19626.3204
       },
       {
         "rank": 62,
@@ -4008,28 +4008,28 @@
         "address": "0x16e1b9c33991bbf9775210739073d69aa979bb08",
         "name": null,
         "stakeFormatted": "18.60k",
-        "stakeEther": 18598.7555
+        "stakeEther": 18598.8614
       },
       {
         "rank": 65,
         "address": "0xdedf80eb89889f22cf555c2e391d8920c087383f",
         "name": null,
         "stakeFormatted": "18.40k",
-        "stakeEther": 18401.7599
+        "stakeEther": 18401.8569
       },
       {
         "rank": 66,
         "address": "0x1b9c86aa6db3d873813fd9a4f0b1c093f44da9f7",
         "name": null,
         "stakeFormatted": "17.90k",
-        "stakeEther": 17902.1697
+        "stakeEther": 17902.6015
       },
       {
         "rank": 67,
         "address": "0xc1b883f2c1d6dcd0672062b359a754dd100cfbea",
         "name": "SelfLiquidity",
         "stakeFormatted": "17.54k",
-        "stakeEther": 17537.7321
+        "stakeEther": 17537.9503
       },
       {
         "rank": 68,
