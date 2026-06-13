@@ -1,18 +1,18 @@
 {
-  "lastUpdated": "2026-06-13T21:59:41.340Z",
+  "lastUpdated": "2026-06-13T23:03:18.512Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
       "label": "crifferent",
       "isActive": true,
-      "points": 400,
+      "points": 540,
       "currentRound": 6282,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-06-13T21:59:41.340Z",
+      "lastChecked": "2026-06-13T23:03:18.512Z",
       "lastError": null,
       "ranking": {
         "rank": 30,
@@ -83,10 +83,6 @@
       },
       "history": [
         {
-          "ts": "2026-05-26T00:01:23.775Z",
-          "rank": 33
-        },
-        {
           "ts": "2026-05-26T04:54:28.757Z",
           "rank": 33
         },
@@ -753,6 +749,10 @@
         {
           "ts": "2026-06-13T21:59:41.340Z",
           "rank": 30
+        },
+        {
+          "ts": "2026-06-13T23:03:18.512Z",
+          "rank": 30
         }
       ]
     },
@@ -761,13 +761,13 @@
       "network": "moonriver",
       "label": "Crifferent",
       "isActive": true,
-      "points": 100,
+      "points": 260,
       "currentRound": 21503,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-06-13T21:59:41.340Z",
+      "lastChecked": "2026-06-13T23:03:18.512Z",
       "lastError": null,
       "ranking": {
         "rank": 46,
@@ -838,10 +838,6 @@
       },
       "history": [
         {
-          "ts": "2026-05-26T00:01:23.775Z",
-          "rank": 52
-        },
-        {
           "ts": "2026-05-26T04:54:28.757Z",
           "rank": 52
         },
@@ -1508,6 +1504,10 @@
         {
           "ts": "2026-06-13T21:59:41.340Z",
           "rank": 46
+        },
+        {
+          "ts": "2026-06-13T23:03:18.512Z",
+          "rank": 46
         }
       ]
     },
@@ -1518,11 +1518,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 6282,
-      "consecutiveInactive": 9,
+      "consecutiveInactive": 10,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-06-13T21:59:41.340Z",
+      "lastChecked": "2026-06-13T23:03:18.512Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -1539,10 +1539,6 @@
       },
       "history": [
         {
-          "ts": "2026-05-26T00:01:23.775Z",
-          "rank": 23
-        },
-        {
           "ts": "2026-05-26T04:54:28.757Z",
           "rank": 23
         },
@@ -2209,6 +2205,10 @@
         {
           "ts": "2026-06-13T21:59:41.340Z",
           "rank": null
+        },
+        {
+          "ts": "2026-06-13T23:03:18.512Z",
+          "rank": null
         }
       ]
     },
@@ -2219,11 +2219,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 21503,
-      "consecutiveInactive": 10,
+      "consecutiveInactive": 11,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-06-13T21:59:41.340Z",
+      "lastChecked": "2026-06-13T23:03:18.512Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -2240,10 +2240,6 @@
       },
       "history": [
         {
-          "ts": "2026-05-26T00:01:23.775Z",
-          "rank": 49
-        },
-        {
           "ts": "2026-05-26T04:54:28.757Z",
           "rank": 49
         },
@@ -2910,12 +2906,16 @@
         {
           "ts": "2026-06-13T21:59:41.340Z",
           "rank": null
+        },
+        {
+          "ts": "2026-06-13T23:03:18.512Z",
+          "rank": null
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.00946088,
+    "moonbeam": 0.00945975,
     "moonriver": 1.32
   },
   "rankings": {
@@ -2938,8 +2938,8 @@
         "rank": 3,
         "address": "0x01bb6ce8b88f09a7d0bfb40eff7f2ad5e0df2e98",
         "name": "Foundation 2",
-        "stakeFormatted": "5.31m",
-        "stakeEther": 5305357.9866
+        "stakeFormatted": "5.29m",
+        "stakeEther": 5292100.9866
       },
       {
         "rank": 4,
@@ -2973,8 +2973,8 @@
         "rank": 8,
         "address": "0xe22d73f5dcccb31a994ad4e7ad265cf69b4e725a",
         "name": "PureStake 2",
-        "stakeFormatted": "4.55m",
-        "stakeEther": 4552850.0956
+        "stakeFormatted": "4.51m",
+        "stakeEther": 4508592.0956
       },
       {
         "rank": 9,
@@ -3191,7 +3191,7 @@
         "address": "0xaa011f68bbfe45c0ea35761d96b39322da93a5dc",
         "name": "Synclub",
         "stakeFormatted": "3.63m",
-        "stakeEther": 3630622.3148
+        "stakeEther": 3632192.3148
       },
       {
         "rank": 40,
@@ -3289,7 +3289,7 @@
         "address": "0xe0a7c5b547db98bcf535ded9e26d28d00f879610",
         "name": null,
         "stakeFormatted": "1.68m",
-        "stakeEther": 1684390.2035
+        "stakeEther": 1684403.7754
       },
       {
         "rank": 54,
@@ -3879,7 +3879,7 @@
         "address": "0x452961d03eef7b4838034b270dc544961ac61911",
         "name": "Moonriver Orbiter Pool 5",
         "stakeFormatted": "9.35k",
-        "stakeEther": 9347.6662
+        "stakeEther": 9353.2054
       },
       {
         "rank": 63,
@@ -3892,8 +3892,8 @@
         "rank": 64,
         "address": "0xa5929b2e3083fb0a7814238b4e05235f659dcf81",
         "name": "Simply Staking",
-        "stakeFormatted": "9.20k",
-        "stakeEther": 9202.0364
+        "stakeFormatted": "9.21k",
+        "stakeEther": 9207.0364
       },
       {
         "rank": 65,
