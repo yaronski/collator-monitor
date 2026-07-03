@@ -1,18 +1,18 @@
 {
-  "lastUpdated": "2026-07-03T22:50:43.109Z",
+  "lastUpdated": "2026-07-03T23:52:50.319Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
       "network": "moonbeam",
       "label": "crifferent",
       "isActive": true,
-      "points": 860,
+      "points": 1000,
       "currentRound": 6359,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-07-03T22:50:43.109Z",
+      "lastChecked": "2026-07-03T23:52:50.319Z",
       "lastError": null,
       "ranking": {
         "rank": 17,
@@ -48,7 +48,7 @@
             "gap": "+0.00",
             "gapPercent": "+0.0%",
             "isSelf": true,
-            "stakeUsd": "$38.3k"
+            "stakeUsd": "$38.5k"
           },
           {
             "rank": 18,
@@ -58,7 +58,7 @@
             "gap": "-104.99k",
             "gapPercent": "-2.5%",
             "isSelf": false,
-            "gapUsd": "-$952"
+            "gapUsd": "-$957"
           },
           {
             "rank": 19,
@@ -68,7 +68,7 @@
             "gap": "-105.34k",
             "gapPercent": "-2.5%",
             "isSelf": false,
-            "gapUsd": "-$956"
+            "gapUsd": "-$960"
           }
         ],
         "threshold": {
@@ -78,14 +78,10 @@
           "stakeFormatted": "1.30m",
           "margin": "+2.93m",
           "marginPercent": "+69.3%",
-          "marginUsd": "+$26.6k"
+          "marginUsd": "+$26.7k"
         }
       },
       "history": [
-        {
-          "ts": "2026-06-16T06:19:20.893Z",
-          "rank": 30
-        },
         {
           "ts": "2026-06-16T11:58:48.562Z",
           "rank": 30
@@ -753,6 +749,10 @@
         {
           "ts": "2026-07-03T22:50:43.109Z",
           "rank": 17
+        },
+        {
+          "ts": "2026-07-03T23:52:50.319Z",
+          "rank": 17
         }
       ]
     },
@@ -761,13 +761,13 @@
       "network": "moonriver",
       "label": "Crifferent",
       "isActive": true,
-      "points": 0,
+      "points": 60,
       "currentRound": 21722,
       "consecutiveInactive": 0,
       "alertedInactive": false,
       "alertedNearCutoff": false,
       "statusText": "active",
-      "lastChecked": "2026-07-03T22:50:43.109Z",
+      "lastChecked": "2026-07-03T23:52:50.319Z",
       "lastError": null,
       "ranking": {
         "rank": 47,
@@ -838,10 +838,6 @@
       },
       "history": [
         {
-          "ts": "2026-06-16T06:19:20.893Z",
-          "rank": 45
-        },
-        {
           "ts": "2026-06-16T11:58:48.562Z",
           "rank": 45
         },
@@ -1508,6 +1504,10 @@
         {
           "ts": "2026-07-03T22:50:43.109Z",
           "rank": 47
+        },
+        {
+          "ts": "2026-07-03T23:52:50.319Z",
+          "rank": 47
         }
       ]
     },
@@ -1518,11 +1518,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 6359,
-      "consecutiveInactive": 194,
+      "consecutiveInactive": 195,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-03T22:50:43.109Z",
+      "lastChecked": "2026-07-03T23:52:50.319Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -1539,10 +1539,6 @@
       },
       "history": [
         {
-          "ts": "2026-06-16T06:19:20.893Z",
-          "rank": null
-        },
-        {
           "ts": "2026-06-16T11:58:48.562Z",
           "rank": null
         },
@@ -2209,6 +2205,10 @@
         {
           "ts": "2026-07-03T22:50:43.109Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-03T23:52:50.319Z",
+          "rank": null
         }
       ]
     },
@@ -2219,11 +2219,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 21722,
-      "consecutiveInactive": 195,
+      "consecutiveInactive": 196,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-03T22:50:43.109Z",
+      "lastChecked": "2026-07-03T23:52:50.319Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -2240,10 +2240,6 @@
       },
       "history": [
         {
-          "ts": "2026-06-16T06:19:20.893Z",
-          "rank": null
-        },
-        {
           "ts": "2026-06-16T11:58:48.562Z",
           "rank": null
         },
@@ -2910,12 +2906,16 @@
         {
           "ts": "2026-07-03T22:50:43.109Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-03T23:52:50.319Z",
+          "rank": null
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.00907092,
+    "moonbeam": 0.0091128,
     "moonriver": 1.25
   },
   "rankings": {
@@ -3086,7 +3086,7 @@
         "address": "0x5c68ce6100f980ced708bd89cce028840ac6bda9",
         "name": "Legend",
         "stakeFormatted": "4.05m",
-        "stakeEther": 4045793.6742
+        "stakeEther": 4045795.3811
       },
       {
         "rank": 25,
@@ -3281,8 +3281,8 @@
         "rank": 52,
         "address": "0x3dd37e5b5a28fa09bdd9194ac0b99a047eabd413",
         "name": null,
-        "stakeFormatted": "1.66m",
-        "stakeEther": 1664955.2863
+        "stakeFormatted": "1.67m",
+        "stakeEther": 1665019.2728
       },
       {
         "rank": 53,
@@ -3935,7 +3935,7 @@
         "address": "0xa7ddd14c05f7a1a57d7bf42573a02459be9d1e0f",
         "name": "Moonriver Orbiter Pool 4",
         "stakeFormatted": "9.67k",
-        "stakeEther": 9667.3957
+        "stakeEther": 9673.7137
       },
       {
         "rank": 70,
