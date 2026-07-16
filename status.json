@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-15T23:45:13.405Z",
+  "lastUpdated": "2026-07-16T01:15:43.968Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
@@ -8,11 +8,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 6406,
-      "consecutiveInactive": 2,
+      "consecutiveInactive": 3,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-15T23:45:13.405Z",
+      "lastChecked": "2026-07-16T01:15:43.968Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -28,10 +28,6 @@
         }
       },
       "history": [
-        {
-          "ts": "2026-07-02T16:01:06.274Z",
-          "rank": 12
-        },
         {
           "ts": "2026-07-02T18:20:56.936Z",
           "rank": 14
@@ -699,21 +695,25 @@
         {
           "ts": "2026-07-15T23:45:13.405Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-16T01:15:43.968Z",
+          "rank": null
         }
       ]
     },
     "moonriver:0x693a…f385": {
       "address": "0x693ab260de2a31c1b5d7dc9cb253b87ed9b1f385",
       "network": "moonriver",
-      "label": "Crifferent",
+      "label": "dude mr",
       "isActive": false,
       "points": null,
-      "currentRound": 21854,
-      "consecutiveInactive": 1,
-      "alertedInactive": false,
+      "currentRound": 21855,
+      "consecutiveInactive": 2,
+      "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-15T23:45:13.405Z",
+      "lastChecked": "2026-07-16T01:15:43.968Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -729,10 +729,6 @@
         }
       },
       "history": [
-        {
-          "ts": "2026-07-02T16:01:06.274Z",
-          "rank": 47
-        },
         {
           "ts": "2026-07-02T18:20:56.936Z",
           "rank": 47
@@ -1400,6 +1396,10 @@
         {
           "ts": "2026-07-15T23:45:13.405Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-16T01:15:43.968Z",
+          "rank": null
         }
       ]
     },
@@ -1410,11 +1410,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 6406,
-      "consecutiveInactive": 345,
+      "consecutiveInactive": 346,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-15T23:45:13.405Z",
+      "lastChecked": "2026-07-16T01:15:43.968Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -1431,10 +1431,6 @@
       },
       "history": [
         {
-          "ts": "2026-07-02T16:01:06.274Z",
-          "rank": null
-        },
-        {
           "ts": "2026-07-02T18:20:56.936Z",
           "rank": null
         },
@@ -2101,6 +2097,10 @@
         {
           "ts": "2026-07-15T23:45:13.405Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-16T01:15:43.968Z",
+          "rank": null
         }
       ]
     },
@@ -2110,12 +2110,12 @@
       "label": "stavros mr",
       "isActive": false,
       "points": null,
-      "currentRound": 21854,
-      "consecutiveInactive": 346,
+      "currentRound": 21855,
+      "consecutiveInactive": 347,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-15T23:45:13.405Z",
+      "lastChecked": "2026-07-16T01:15:43.968Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -2132,10 +2132,6 @@
       },
       "history": [
         {
-          "ts": "2026-07-02T16:01:06.274Z",
-          "rank": null
-        },
-        {
           "ts": "2026-07-02T18:20:56.936Z",
           "rank": null
         },
@@ -2802,13 +2798,17 @@
         {
           "ts": "2026-07-15T23:45:13.405Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-16T01:15:43.968Z",
+          "rank": null
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.00890762,
-    "moonriver": 1.37
+    "moonbeam": 0.0089151,
+    "moonriver": 1.36
   },
   "rankings": {
     "moonbeam": [
@@ -2893,8 +2893,8 @@
         "rank": 12,
         "address": "0xd9ffab42f9a2de10c2c920eb8d333e01cd5fb4a6",
         "name": "True Staking",
-        "stakeFormatted": "3.97m",
-        "stakeEther": 3966140.2104
+        "stakeFormatted": "3.96m",
+        "stakeEther": 3955910.9941
       },
       {
         "rank": 13,
@@ -2921,8 +2921,8 @@
         "rank": 16,
         "address": "0x8f6d11c80050c6d5af18bec374dc73d85ec801c4",
         "name": null,
-        "stakeFormatted": "3.37m",
-        "stakeEther": 3373975.5785
+        "stakeFormatted": "3.36m",
+        "stakeEther": 3362550.5785
       },
       {
         "rank": 17,
@@ -2984,8 +2984,8 @@
         "rank": 25,
         "address": "0x7f1f9a444a22d8d39efdfdd9c441070f36a20750",
         "name": "Simply Staking 2",
-        "stakeFormatted": "1.71m",
-        "stakeEther": 1710795.1279
+        "stakeFormatted": "1.66m",
+        "stakeEther": 1657928.1279
       },
       {
         "rank": 26,
