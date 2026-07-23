@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-23T07:32:15.227Z",
+  "lastUpdated": "2026-07-23T10:08:14.098Z",
   "collators": {
     "moonbeam:0x1002…c08e": {
       "address": "0x10023fa70ed528e4f28915bf210f6e87b057c08e",
@@ -8,11 +8,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 6431,
-      "consecutiveInactive": 104,
+      "consecutiveInactive": 105,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-23T07:32:15.227Z",
+      "lastChecked": "2026-07-23T10:08:14.098Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -28,10 +28,6 @@
         }
       },
       "history": [
-        {
-          "ts": "2026-07-11T12:44:22.684Z",
-          "rank": 12
-        },
         {
           "ts": "2026-07-11T14:15:17.997Z",
           "rank": 11
@@ -699,6 +695,10 @@
         {
           "ts": "2026-07-23T07:32:15.227Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-23T10:08:14.098Z",
+          "rank": null
         }
       ]
     },
@@ -708,12 +708,12 @@
       "label": "dude mr",
       "isActive": false,
       "points": null,
-      "currentRound": 21920,
-      "consecutiveInactive": 103,
+      "currentRound": 21921,
+      "consecutiveInactive": 104,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-23T07:32:15.227Z",
+      "lastChecked": "2026-07-23T10:08:14.098Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -729,10 +729,6 @@
         }
       },
       "history": [
-        {
-          "ts": "2026-07-11T12:44:22.684Z",
-          "rank": 39
-        },
         {
           "ts": "2026-07-11T14:15:17.997Z",
           "rank": 39
@@ -1400,6 +1396,10 @@
         {
           "ts": "2026-07-23T07:32:15.227Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-23T10:08:14.098Z",
+          "rank": null
         }
       ]
     },
@@ -1410,11 +1410,11 @@
       "isActive": false,
       "points": null,
       "currentRound": 6431,
-      "consecutiveInactive": 447,
+      "consecutiveInactive": 448,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-23T07:32:15.227Z",
+      "lastChecked": "2026-07-23T10:08:14.098Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -1431,10 +1431,6 @@
       },
       "history": [
         {
-          "ts": "2026-07-11T12:44:22.684Z",
-          "rank": null
-        },
-        {
           "ts": "2026-07-11T14:15:17.997Z",
           "rank": null
         },
@@ -2101,6 +2097,10 @@
         {
           "ts": "2026-07-23T07:32:15.227Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-23T10:08:14.098Z",
+          "rank": null
         }
       ]
     },
@@ -2110,12 +2110,12 @@
       "label": "stavros mr",
       "isActive": false,
       "points": null,
-      "currentRound": 21920,
-      "consecutiveInactive": 448,
+      "currentRound": 21921,
+      "consecutiveInactive": 449,
       "alertedInactive": true,
       "alertedNearCutoff": false,
       "statusText": "inactive",
-      "lastChecked": "2026-07-23T07:32:15.227Z",
+      "lastChecked": "2026-07-23T10:08:14.098Z",
       "lastError": null,
       "ranking": {
         "rank": null,
@@ -2132,10 +2132,6 @@
       },
       "history": [
         {
-          "ts": "2026-07-11T12:44:22.684Z",
-          "rank": null
-        },
-        {
           "ts": "2026-07-11T14:15:17.997Z",
           "rank": null
         },
@@ -2802,12 +2798,16 @@
         {
           "ts": "2026-07-23T07:32:15.227Z",
           "rank": null
+        },
+        {
+          "ts": "2026-07-23T10:08:14.098Z",
+          "rank": null
         }
       ]
     }
   },
   "prices": {
-    "moonbeam": 0.00884172,
+    "moonbeam": 0.00907972,
     "moonriver": 1.3
   },
   "rankings": {
@@ -2831,7 +2831,7 @@
         "address": "0x8f6d11c80050c6d5af18bec374dc73d85ec801c4",
         "name": null,
         "stakeFormatted": "3.07m",
-        "stakeEther": 3071916.6891
+        "stakeEther": 3070416.6891
       },
       {
         "rank": 4,
@@ -2984,17 +2984,17 @@
       },
       {
         "rank": 7,
-        "address": "0x10a2f17d8150b76359e9ced567fc348c71a74b46",
-        "name": "Foundation 4",
-        "stakeFormatted": "17.68k",
-        "stakeEther": 17681.4358
-      },
-      {
-        "rank": 8,
         "address": "0xb7ab89933d2f16e6d183aadcc5032ba17d6a5aec",
         "name": "STAKECRAFT",
         "stakeFormatted": "16.94k",
         "stakeEther": 16943.0298
+      },
+      {
+        "rank": 8,
+        "address": "0x10a2f17d8150b76359e9ced567fc348c71a74b46",
+        "name": "Foundation 4",
+        "stakeFormatted": "15.68k",
+        "stakeEther": 15676.7011
       },
       {
         "rank": 9,
